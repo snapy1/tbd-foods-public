@@ -49,7 +49,7 @@ class User {
       'chronic conditions': _chronicConditionsToString() ?? 'User has no chronic conditions',
       'nutrient deficiencies': _nutrientDeficienciesToString() ?? 'User has no nutrient defciencies',
       'dietary restrictions': dietaryPreferences==null ? 'User has no dietary preferences' : 'User has the following dietary preferences: $dietaryPreferences',
-      'other restrictions': otherRestrictions ?? 'User has no other restrictions'
+      'other restrictions': _otherRestrictionsToString() ?? 'User has no other restrictions'
     };
   }
 
