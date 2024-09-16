@@ -42,18 +42,27 @@ class User {
 
   List<dynamic>? getAllInformation(){
     return [age, activityLevel, hasWeightGoals, currentWeight, weightGoal, religion, chronicConditions, nutrientDeciencies, dietaryPreferences, otherRestrictions];
-    
   }
 
+  // can probably remove these single liners in the future since dart allows
+  // directly access the objects private variables of the constructor... 
+  int getAge(){ return age; }
+  int getActivityLevel(){ return activityLevel; }
+  int? getCurrentWeight(){ return currentWeight; }
+  int? getWeightGoal(){ return hasWeightGoals ? weightGoal : null; }
+  String? getReligion(){ return religion; }
+  String? getDietaryPreference(){ return dietaryPreferences; }
+  ////////////////////////////////////////////////////////////////
+
   String? getChronicConditions() {
-    if (this.chronicConditions == null) {
+    if (chronicConditions == null) {
       return null; // or return an empty string???: ''
     } else {
 
         String returnable = "";
-        for (int i = 0; i < this.chronicConditions!.length; i++) {
-          returnable += this.chronicConditions![i];
-          if (i < this.chronicConditions!.length - 1) {
+        for (int i = 0; i < chronicConditions!.length; i++) {
+          returnable += chronicConditions![i];
+          if (i < chronicConditions!.length - 1) {
             returnable += ", ";
           }
         }
@@ -63,14 +72,14 @@ class User {
   }
 
   String? getNutrientDeciencies() {
-    if (this.nutrientDeciencies == null) {
+    if (nutrientDeciencies == null) {
       return null; // or return an empty string???: ''
     } else {
 
         String returnable = "";
-        for (int i = 0; i < this.nutrientDeciencies!.length; i++) {
-          returnable += this.nutrientDeciencies![i];
-          if (i < this.nutrientDeciencies!.length - 1) {
+        for (int i = 0; i < nutrientDeciencies!.length; i++) {
+          returnable += nutrientDeciencies![i];
+          if (i < nutrientDeciencies!.length - 1) {
             returnable += ", ";
           }
         }
@@ -80,14 +89,14 @@ class User {
   }
 
   String? getOtherRestrictions() {
-    if (this.otherRestrictions == null) {
+    if (otherRestrictions == null) {
       return null; // or return an empty string???: ''
     } else {
 
         String returnable = "";
-        for (int i = 0; i < this.otherRestrictions!.length; i++) {
-          returnable += this.otherRestrictions![i];
-          if (i < this.otherRestrictions!.length - 1) {
+        for (int i = 0; i < otherRestrictions!.length; i++) {
+          returnable += otherRestrictions![i];
+          if (i < otherRestrictions!.length - 1) {
             returnable += ", ";
           }
         }
