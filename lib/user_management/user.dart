@@ -40,9 +40,44 @@ class User {
     }
   );
 
-  List<dynamic>? getAllInformation(){
-    return [age, activityLevel, hasWeightGoals, currentWeight, weightGoal, religion, chronicConditions, nutrientDeciencies, dietaryPreferences, otherRestrictions];
+  Map<String, dynamic>? getAllInformation(){
+    return {
+      'age': age,
+      'activity level': 'User as an activity level of $activityLevel which is measured from a range of 0-10',
+      'weight goals': hasWeightGoals ? weightGoal : 'User has no weight goal.',
+      'religion': religion==null ? 'User has no religous based preferences' : 'User is following the the religion of $religion''s',
+      'chronic conditions': _chronicConditionsToString() ?? 'User has no chronic conditions',
+      'nutrient deficiencies': _nutrientDeficienciesToString() ?? 'User has no nutrient defciencies',
+      'dietary restrictions': dietaryPreferences==null ? 'User has no dietary preferences' : 'User has the following dietary preferences: $dietaryPreferences',
+      'other restrictions': otherRestrictions ?? 'User has no other restrictions'
+    };
   }
+
+  // Function to format the chronic conditions list. and return it in a s, s, s, s format. 
+  String? _otherRestrictionsToString() {
+    if (otherRestrictions == null) return null;
+
+    // Join all allergens with a comma separator
+    return '${otherRestrictions?.join(', ')},';
+  }
+
+  // Function to format the netrient deficiencies list. and return it in a s, s, s, s format. 
+  String? _nutrientDeficienciesToString() {
+    if (nutrientDeciencies == null) return null;
+
+    // Join all allergens with a comma separator
+    return '${nutrientDeciencies?.join(', ')},';
+  }
+
+  // Function to format the chronic condiitons list. and return it in a s, s, s, s format. 
+  String? _chronicConditionsToString() {
+    if (chronicConditions == null) return null;
+
+    // Join all allergens with a comma separator
+    return '${chronicConditions?.join(', ')},';
+  }
+
+
 
   // can probably remove these single liners in the future since dart allows
   // directly access the objects private variables of the constructor... 
