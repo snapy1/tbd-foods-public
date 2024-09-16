@@ -77,18 +77,6 @@ class User {
     return '${chronicConditions?.join(', ')},';
   }
 
-
-
-  // can probably remove these single liners in the future since dart allows
-  // directly access the objects private variables of the constructor... 
-  int getAge(){ return age; }
-  int getActivityLevel(){ return activityLevel; }
-  int? getCurrentWeight(){ return currentWeight; }
-  int? getWeightGoal(){ return hasWeightGoals ? weightGoal : null; }
-  String? getReligion(){ return religion; }
-  String? getDietaryPreference(){ return dietaryPreferences; }
-  ////////////////////////////////////////////////////////////////
-
   String? getChronicConditions() {
     if (chronicConditions == null) {
       return null; // or return an empty string???: ''
