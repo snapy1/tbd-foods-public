@@ -46,6 +46,58 @@ class Food {
         processingLevel = 'Low', // Default assumption; could be adjusted dynamically
         weightInGrams = 100; // Assuming based on package size
 
+
+    Map<String, dynamic> getAllInformation(){
+      return {
+        'calories': calories ?? 'No total calorie information available.',
+        'weight in grams': weightInGrams ?? 'No total weight in gram information available.',
+        'serving size': servingSize ?? 'No total serving size information available.',
+        'added sugars': addedSugars ?? 'No total added sugar information available.',
+        'fiber': fiber ?? 'No total fiber information available.',
+        'sodium': sodium ?? 'No total sodium information available.',
+        'saturated fats': saturatedFats ?? 'No total saturated fat information available.',
+        'trans fats': transFats ?? 'No total trans fat information available.',
+        'vitamins': _vitaminsToString() ?? 'No vitamin information available.',
+        'protein': protein ?? 'No total protein information available.', 
+        'carbohydrates': carbohydrates ?? 'No total carbohyrate information available.',
+        'total fats': totalFats ?? 'No total fat information available.', // returns total fats if total fats is not null. Otherwise returns 'No total fat information'. 
+        'cholesterol': cholesterol ?? 'No total cholesterol information available.',
+        'natural sugars': naturalSugars ?? 'No total natural sugar information available',
+        'glycemic index': glycemicIndex ?? 'No total glycemic index information available.',
+        'allergens': _allergensToString() ?? 'No total allergen information available.',
+        'ingredients': _ingredientsToString() ?? 'No total ingredient information available',
+        'food group': foodGroup ?? 'No total food group information available',
+        'isOrganic': isOrganic ?? 'No total information available regarding whether it is organic or not.',
+        'processing level': processingLevel ?? 'No total processing level information available'
+      };
+    }
+
+    // Function to format allergens
+    String? _allergensToString() {
+      if (allergens == null) return null;
+  
+      // Join all allergens with a comma separator
+      return '${allergens?.join(', ')},';
+    }
+
+    // Function to format ingredients
+    String? _ingredientsToString() {
+      if (ingredients == null) return null;
+      
+      // Join all ingredients with a comma separator
+      return '${ingredients?.join(', ')},';
+    }
+
+    String? _vitaminsToString(){
+      if (vitamins == null) return null;
+      
+      // Iterate over the map and format each key-value pair
+      return vitamins!.entries
+          .map((entry) => '${entry.key}: ${entry.value}%')
+          .join(', ');
+  
+      }
+
   // Helper method to extract nutrient values from the JSON data.
   static int? _parseNutrientValue(String jsonData, String nutrientName) {
     final parsedJson = jsonDecode(jsonData);
