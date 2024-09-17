@@ -1,3 +1,8 @@
+/// Likely can delete since we do all of our parsing in the food.dart file now
+library;
+
+
+
 class JsonParser {
 
   void parseFoodJson(Map<String, dynamic> jsonData) {

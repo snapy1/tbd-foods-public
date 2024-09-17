@@ -7,12 +7,23 @@ import 'package:tbd_foods/user_management/user.dart';
 /// This call will then give a score in relation to how healthy 
 /// the food is considered based off of the users profile.. 
 /// The score of the food will be determined by (prone to change) a number between 0 and 100. 
+/// ----- Later on we will add a more sophisticated way of calculating whether the food is healthy or not ----
+/// ----- For the time being we will use AI to generate this awnser ------------------------------------------
+/// 
+/// ---- AI Generation will be used for now. -----------------------------------------------------------------
+/// Alternatively we can use AI to take in the users information and generate a score
+/// between 0 and 100 based off of the foods data, and the users data. 
 class CalorieScore {
 
   final Food currentFood;
   final User currentUser;
   
   CalorieScore({required this.currentFood, required this.currentUser});
+
+
+
+
+  
 
   /// Returns a value from 0 to 100 based off of the calorie count. 
   int _calorieScore(int calories) {

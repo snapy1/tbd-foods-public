@@ -11,7 +11,6 @@
 /// and any other specfic dietary restrictions. 
 library;
 
-
 class User {
   final int age;
   final int activityLevel;
@@ -23,7 +22,6 @@ class User {
   final List<String>? nutrientDeciencies;
   final String? dietaryPreferences;
   final List<String>? otherRestrictions;
-
 
   User(
     {

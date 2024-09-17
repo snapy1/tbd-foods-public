@@ -1,15 +1,15 @@
 import 'dart:async';
-import 'dart:convert'; // For JSON encoding/decoding
-import 'package:http/http.dart' as http; // For making HTTP requests
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:tbd_foods/barcode_managment/json_parser.dart';
+import 'package:tbd_foods/server_connection/server_connection.dart';
+import 'package:tbd_foods/user_management/user.dart';
 
 class BarcodeScannerSimple extends StatefulWidget {
-  final String serverURL; // the IP of the flask server to piggyback API calls. 
   final int timeout; // timeout in seconds for barcode duplication
+  final User user;
 
-  const BarcodeScannerSimple({super.key, required this.serverURL, required this.timeout});
+  const BarcodeScannerSimple({super.key, required this.timeout, required this.user});
 
   @override
   State<BarcodeScannerSimple> createState() => _BarcodeScannerSimpleState();
@@ -20,6 +20,7 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
   String? _prevBarcode;
   Timer? resetTimer;  //Timer to reset prevBarcode
   JsonParser parser = JsonParser();
+  late ServerConnection server = ServerConnection(IP: "http://148.137.229.124:5001");
 
   Widget _buildBarcode(Barcode? value) {
     if (value == null) {
@@ -37,7 +38,7 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
     );
   }
 
-  void _handleBarcode(BarcodeCapture barcodes) {
+    void _handleBarcode(BarcodeCapture barcodes) {
     if (mounted) {
       setState(() {
         _currentBarcode = barcodes.barcodes.firstOrNull;
@@ -46,15 +47,18 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
         if (_currentBarcode != null && _currentBarcode!.displayValue != null) {
 
           // If the bar code is different than the previous one, then go ahead and process it.
-          // this eliminates multiple api calls of the same bar code. 
-          // 
-          // In the future add a timeout so that this gets reset after X amount 
-          // of seconds incase the user wants to scan the same thing twice. 
-          if (_prevBarcode != _currentBarcode!.displayValue){
+          // This eliminates multiple API calls of the same barcode.
+          if (_prevBarcode != _currentBarcode!.displayValue) {
             print('Scanned barcode: ${_currentBarcode!.displayValue}');
 
-            // Send to Flask server. 
-            sendFoodDataRequest(_currentBarcode!.displayValue, parser);
+            // Send to Flask server.
+            // Make the server request async and await the result
+            server.sendRequest(widget.user, _currentBarcode!.displayValue).then((result) {
+              // Handle the result of the request
+              print('Request result: $result');
+            }).catchError((error) {
+              print('Error occurred during the request: $error');
+            });
 
             // Start or reset the timer to set prevBarcode to null after X seconds (e.g., 10 seconds)
             resetTimer?.cancel();  // Cancel any previous timer if it's running
@@ -67,8 +71,6 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
 
             _prevBarcode = _currentBarcode!.displayValue;
           }
-          
-          
         } else {
           print('No display value for the scanned barcode.');
         }
@@ -110,26 +112,27 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
     );
   }
 
-  Future<void> sendFoodDataRequest(String? idOfFood, JsonParser parser) async {
-    final url = Uri.parse('http://192.168.0.10:5001/get_food_data');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'food_id': idOfFood}),
-    );
+  // Future<void> sendFoodDataRequest(String? idOfFood, JsonParser parser) async {
+  //   final url = Uri.parse('http://192.168.0.10:5001/get_food_data'); // <-- original way
+  //       // final url = Uri.parse('http://192.168.0.10:5001/lib/get_food_data');
+  //   final response = await http.post(
+  //     url,
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: jsonEncode({'food_id': idOfFood}),
+  //   );
 
-    print("Barcode captured: $idOfFood");
+  //   print("Barcode captured: $idOfFood");
 
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-      // print('Response data: $jsonResponse');
+  //   if (response.statusCode == 200) {
+  //     final jsonResponse = jsonDecode(response.body);
+  //     // print('Response data: $jsonResponse');
 
-      // Pass the decoded JSON to the parser
-      parser.parseFoodJson(jsonResponse);
-    } else {
-      print('Failed to get food data. Status code: ${response.statusCode}');
-    }
-  }
+  //     // Pass the decoded JSON to the parser
+  //     parser.parseFoodJson(jsonResponse);
+  //   } else {
+  //     print('Failed to get food data. Status code: ${response.statusCode}');
+  //   }
+  // }
 
 
   // // Future function to send a practice request and print JSON response
