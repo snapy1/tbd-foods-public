@@ -1,0 +1,247 @@
+{
+    "items": [
+      {
+        "allergens": [],
+        "barcode": "012546011075",
+        "brand": "Trident",
+        "brand_list": [
+          "Trident"
+        ],
+        "categories": [],
+        "countries": [
+          "France",
+          "Spain",
+          "United States"
+        ],
+        "country_details": {
+          "english_speaking": 1,
+          "non_english_speaking": 2
+        },
+        "description": null,
+        "diet_flags": [
+          {
+            "compatibility_description": "Not necessarily banned. Consider the source of each ingredient.",
+            "compatibility_level": 1,
+            "diet_label": "Vegan",
+            "ingredient": "Lecithin",
+            "ingredient_description": "May contain egg yolks. Can also be directly obtained from animal fat or soy.",
+            "is_allergen": false,
+            "is_compatible": null
+          },
+          {
+            "compatibility_description": "Not necessarily banned. Consider the source of each ingredient.",
+            "compatibility_level": 1,
+            "diet_label": "Vegan",
+            "ingredient": "Glycerin",
+            "ingredient_description": "Often derived from animal fat but may also be plant based.",
+            "is_allergen": false,
+            "is_compatible": null
+          },
+          {
+            "compatibility_description": "Not necessarily banned. Consider the source of each ingredient.",
+            "compatibility_level": 1,
+            "diet_label": "Vegan",
+            "ingredient": "Natural",
+            "ingredient_description": "Ingredients are not synthetic or artificial, but extracted directly from plants or animal products.",
+            "is_allergen": false,
+            "is_compatible": null
+          },
+          {
+            "compatibility_description": "Banned - Not acceptable for diet/lifestyle.",
+            "compatibility_level": 0,
+            "diet_label": "Vegan",
+            "ingredient": "Sucralose",
+            "ingredient_description": "Known as Splenda. Produced from cane sugar and tested on animals. May be filtered through bone char.",
+            "is_allergen": false,
+            "is_compatible": "False"
+          },
+          {
+            "compatibility_description": "Not necessarily banned. Consider the source of each ingredient.",
+            "compatibility_level": 1,
+            "diet_label": "Vegetarian",
+            "ingredient": "Glycerin",
+            "ingredient_description": "Often derived from animal fat but may also be plant based.",
+            "is_allergen": false,
+            "is_compatible": null
+          },
+          {
+            "compatibility_description": "Not necessarily banned. Consider the source of each ingredient.",
+            "compatibility_level": 1,
+            "diet_label": "Vegetarian",
+            "ingredient": "Natural",
+            "ingredient_description": "Ingredients are not synthetic or artificial, but extracted directly from plants or animal products.",
+            "is_allergen": false,
+            "is_compatible": null
+          }
+        ],
+        "diet_labels": {
+          "gluten_free": {
+            "compatibility_level": 2,
+            "confidence": 1,
+            "confidence_description": "Compatible with the Gluten Free diet.",
+            "is_compatible": true,
+            "name": "Gluten Free"
+          },
+          "vegan": {
+            "compatibility_level": 0,
+            "confidence": 1,
+            "confidence_description": "Not compatible with the Vegan diet.",
+            "is_compatible": false,
+            "name": "Vegan"
+          },
+          "vegetarian": {
+            "compatibility_level": 1,
+            "confidence": 1,
+            "confidence_description": "Compatibility with the Vegetarian diet is unknown.",
+            "is_compatible": null,
+            "name": "Vegetarian"
+          }
+        },
+        "has_english_ingredients": true,
+        "ingredient_list": [
+          "sorbitol",
+          "gum base",
+          "xylitol",
+          "glycerin",
+          "natural and artificial flavor",
+          "acesulfame potassium",
+          "aspartame",
+          "bht (to maintain freshness)",
+          "blue 1 lake",
+          "mannitol",
+          "soy lecithin",
+          "sucralose",
+          "yellow 5 lake",
+          "phenylketonurics: contains phenylalanine"
+        ],
+        "ingredients": "sorbitol, gum base, xylitol, glycerin, natural and artificial flavor, acesulfame potassium, aspartame, bht (to maintain freshness), blue 1 lake, mannitol, soy lecithin, sucralose, yellow 5 lake, phenylketonurics: contains phenylalanine",
+        "keywords": [
+          "Azucar",
+          "Botana",
+          "Chicle",
+          "Dulce",
+          "Free1x14",
+          "Gum",
+          "Sin",
+          "Snack",
+          "Spearmint",
+          "Sugar",
+          "Trident",
+          "Verified"
+        ],
+        "minerals": [],
+        "name": "Trident gum spearmint sugar free1x14 pc",
+        "nutrients": [
+          {
+            "data_points": null,
+            "description": null,
+            "measurement_unit": "kj",
+            "name": "Energy",
+            "per_100g": 1100.0,
+            "rank": null
+          },
+          {
+            "data_points": null,
+            "description": null,
+            "measurement_unit": "g",
+            "name": "Fat",
+            "per_100g": 0.0,
+            "rank": null
+          },
+          {
+            "data_points": null,
+            "description": null,
+            "measurement_unit": "g",
+            "name": "Saturated Fat",
+            "per_100g": 0.0,
+            "rank": null
+          },
+          {
+            "data_points": null,
+            "description": null,
+            "measurement_unit": "g",
+            "name": "Carbohydrates",
+            "per_100g": 52.63,
+            "rank": null
+          },
+          {
+            "data_points": null,
+            "description": null,
+            "measurement_unit": "g",
+            "name": "Sugars",
+            "per_100g": 0.0,
+            "rank": null
+          },
+          {
+            "data_points": null,
+            "description": null,
+            "measurement_unit": "g",
+            "name": "Proteins",
+            "per_100g": 0.0,
+            "rank": null
+          },
+          {
+            "data_points": null,
+            "description": null,
+            "measurement_unit": "mg",
+            "name": "Salt",
+            "per_100g": 0.0,
+            "rank": null
+          },
+          {
+            "data_points": null,
+            "description": null,
+            "measurement_unit": "g",
+            "name": "Sodium",
+            "per_100g": 0.0,
+            "rank": null
+          },
+          {
+            "data_points": null,
+            "description": null,
+            "measurement_unit": "pct",
+            "name": "Fruits Vegetables Nuts Estimate From Ingredients",
+            "per_100g": 0.0,
+            "rank": null
+          },
+          {
+            "data_points": null,
+            "description": null,
+            "measurement_unit": null,
+            "name": "Nova Group",
+            "per_100g": 4.0,
+            "rank": null
+          }
+        ],
+        "package": {
+          "quantity": null,
+          "size": "100g"
+        },
+        "packaging_photos": {
+          "front": {
+            "display": "https://chompthis.com/api/assets/images/product/?i=001/254/601/1075/front_en.18.400.jpg",
+            "small": "https://chompthis.com/api/assets/images/product/?i=001/254/601/1075/front_en.18.200.jpg",
+            "thumb": "https://chompthis.com/api/assets/images/product/?i=001/254/601/1075/front_en.18.100.jpg"
+          },
+          "ingredients": {
+            "display": null,
+            "small": null,
+            "thumb": null
+          },
+          "nutrition": {
+            "display": "https://chompthis.com/api/assets/images/product/?i=001/254/601/1075/nutrition_en.9.400.jpg",
+            "small": "https://chompthis.com/api/assets/images/product/?i=001/254/601/1075/nutrition_en.9.200.jpg",
+            "thumb": "https://chompthis.com/api/assets/images/product/?i=001/254/601/1075/nutrition_en.9.100.jpg"
+          }
+        },
+        "palm_oil_ingredients": [],
+        "serving": {
+          "measurement_unit": null,
+          "size": "1 Stick (1.9 g) (1.9 g)",
+          "size_fulltext": null
+        },
+        "traces": [],
+        "vitamins": []
+      }
+    ]
+  }

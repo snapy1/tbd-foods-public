@@ -15,26 +15,30 @@ class User {
   final int age;
   final int activityLevel;
   final bool hasWeightGoals;
+  final bool vegan;
+  final bool vegetarian;
+  final bool glutenIntolerant;
   final int? currentWeight;
   final int? weightGoal;
   final String? religion;
   final List<String>? chronicConditions;
   final List<String>? nutrientDeciencies;
-  final String? dietaryPreferences;
-  final List<String>? otherRestrictions;
+  final List<String>? restrictions;
 
   User(
     {
       required this.age,
       required this.activityLevel,
       required this.hasWeightGoals, 
+      required this.vegan,
+      required this.vegetarian,
+      required this.glutenIntolerant,
       this.currentWeight,
       this.weightGoal,
       this.religion,
       this.chronicConditions,
       this.nutrientDeciencies,
-      this.dietaryPreferences,
-      this.otherRestrictions
+      this.restrictions
     }
   );
 
@@ -46,17 +50,16 @@ class User {
       'religion': religion==null ? 'User has no religous based preferences' : 'User is following the the religion of $religion''s',
       'chronic conditions': _chronicConditionsToString() ?? 'User has no chronic conditions',
       'nutrient deficiencies': _nutrientDeficienciesToString() ?? 'User has no nutrient defciencies',
-      'dietary restrictions': dietaryPreferences==null ? 'User has no dietary preferences' : 'User has the following dietary preferences: $dietaryPreferences',
       'other restrictions': _otherRestrictionsToString() ?? 'User has no other restrictions'
     };
   }
 
   // Function to format the chronic conditions list. and return it in a s, s, s, s format. 
   String? _otherRestrictionsToString() {
-    if (otherRestrictions == null) return null;
+    if (restrictions == null) return null;
 
     // Join all allergens with a comma separator
-    return '${otherRestrictions?.join(', ')},';
+    return '${restrictions?.join(', ')},';
   }
 
   // Function to format the netrient deficiencies list. and return it in a s, s, s, s format. 
@@ -110,14 +113,14 @@ class User {
   }
 
   String? getOtherRestrictions() {
-    if (otherRestrictions == null) {
+    if (restrictions == null) {
       return null; // or return an empty string???: ''
     } else {
 
         String returnable = "";
-        for (int i = 0; i < otherRestrictions!.length; i++) {
-          returnable += otherRestrictions![i];
-          if (i < otherRestrictions!.length - 1) {
+        for (int i = 0; i < restrictions!.length; i++) {
+          returnable += restrictions![i];
+          if (i < restrictions!.length - 1) {
             returnable += ", ";
           }
         }

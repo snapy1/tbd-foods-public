@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:tbd_foods/barcode_managment/json_parser.dart';
+import 'package:tbd_foods/health_data/food.dart';
 import 'package:tbd_foods/server_connection/server_connection.dart';
 import 'package:tbd_foods/user_management/user.dart';
 
@@ -20,7 +21,8 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
   String? _prevBarcode;
   Timer? resetTimer;  //Timer to reset prevBarcode
   JsonParser parser = JsonParser();
-  late ServerConnection server = ServerConnection(IP: "http://148.137.229.124:5001");
+  late ServerConnection server = ServerConnection(IP: "http://192.168.50.227:5001");
+  
 
   Widget _buildBarcode(Barcode? value) {
     if (value == null) {
@@ -38,7 +40,9 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
     );
   }
 
-    void _handleBarcode(BarcodeCapture barcodes) {
+
+
+  void _handleBarcode(BarcodeCapture barcodes) {
     if (mounted) {
       setState(() {
         _currentBarcode = barcodes.barcodes.firstOrNull;
@@ -56,6 +60,11 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
             server.sendRequest(widget.user, _currentBarcode!.displayValue).then((result) {
               // Handle the result of the request
               print('Request result: $result');
+
+              // Create our food object and start to process it
+              Food foodObject = Food(result, widget.user);
+
+
             }).catchError((error) {
               print('Error occurred during the request: $error');
             });
@@ -111,49 +120,6 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
       ),
     );
   }
-
-  // Future<void> sendFoodDataRequest(String? idOfFood, JsonParser parser) async {
-  //   final url = Uri.parse('http://192.168.0.10:5001/get_food_data'); // <-- original way
-  //       // final url = Uri.parse('http://192.168.0.10:5001/lib/get_food_data');
-  //   final response = await http.post(
-  //     url,
-  //     headers: {'Content-Type': 'application/json'},
-  //     body: jsonEncode({'food_id': idOfFood}),
-  //   );
-
-  //   print("Barcode captured: $idOfFood");
-
-  //   if (response.statusCode == 200) {
-  //     final jsonResponse = jsonDecode(response.body);
-  //     // print('Response data: $jsonResponse');
-
-  //     // Pass the decoded JSON to the parser
-  //     parser.parseFoodJson(jsonResponse);
-  //   } else {
-  //     print('Failed to get food data. Status code: ${response.statusCode}');
-  //   }
-  // }
-
-
-  // // Future function to send a practice request and print JSON response
-  // Future<void> sendFoodDataRequest(String? idOfFood) async {
-  //   // http://192.168.0.10:5001/get_food_data
-  //   final url = Uri.parse(widget.serverURL);
-  //   final response = await http.post(
-  //     url,
-  //     headers: {'Content-Type': 'application/json'},
-  //     body: jsonEncode({'food_id': idOfFood}),
-  //   );
-
-  //   print("Barcode captured: $idOfFood");
-
-  //   if (response.statusCode == 200) {
-  //     final jsonResponse = jsonDecode(response.body);
-  //     print('Response data: $jsonResponse');
-  //   } else {
-  //     print('Failed to get food data. Status code: ${response.statusCode}');
-  //   }
-  // }
 
 }
 

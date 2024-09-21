@@ -1,55 +1,120 @@
 
+
+import 'package:tbd_foods/user_management/user.dart';
+
 /// This class will hold information about a specific food object.
 class Food {
-  final int? calories;
-  final int? weightInGrams;
-  final int? servingSize;
-  final int? addedSugars;
-  final int? fiber;
-  final int? sodium;
-  final int? saturatedFats;
-  final int? transFats;
-  final Map<String, int>? vitamins;
-  final int? protein;
-  final int? carbohydrates;
-  final int? totalFats;
-  final int? cholesterol;
-  final int? naturalSugars;
-  final int? glycemicIndex; // Good for determining food health for diabetics.
-  final List<String>? allergens;
-  final List<String>? ingredients;
-  final String? foodGroup;
-  final bool? isOrganic;
-  final String? processingLevel;
+  final User user;
+  final Map<String, dynamic> jsonData;
+  double? calories;
+  dynamic servingSize;
+  double? addedSugars;
+  double? fiber;
+  double? sodium;
+  double? saturatedFats;
+  double? transFats;
+  Map<String, int>? vitamins;
+  double? protein;
+  double? carbohydrates;
+  double? totalFats;
+  double? cholesterol;
+  double? naturalSugars;
+  double? calcium;
+  double? iron;
+  double? vitaminC;
+  double? vitaminA;
+  double? glycemicIndex; // Good for determining food health for diabetics.
+  List<String>? allergens;
+  List<String>? ingredients;
+  String? foodGroup;
+  bool? isOrganic;
+  String? processingLevel;
+  String? description;
 
   // Updated constructor to initialize fields directly from a parsed Map.
-  Food(Map<String, dynamic> jsonData)
-      : calories = _parseNutrientValue(jsonData, 'Energy'),
-        protein = _parseNutrientValue(jsonData, 'Protein'),
-        totalFats = _parseNutrientValue(jsonData, 'Total lipid (fat)'),
-        carbohydrates = _parseNutrientValue(jsonData, 'Carbohydrate, by difference'),
-        fiber = _parseNutrientValue(jsonData, 'Fiber, total dietary'),
-        addedSugars = _parseNutrientValue(jsonData, 'Sugars, total including NLEA'),
-        sodium = _parseNutrientValue(jsonData, 'Sodium, Na'),
-        saturatedFats = _parseNutrientValue(jsonData, 'Fatty acids, total saturated'),
-        transFats = _parseNutrientValue(jsonData, 'Fatty acids, total trans'),
-        cholesterol = _parseNutrientValue(jsonData, 'Cholesterol'),
-        naturalSugars = null, // Not provided in the example JSON
+   // Constructor to initialize fields
+  Food(this.jsonData, this.user)
+      : naturalSugars = null, // Not provided in the example JSON
         glycemicIndex = null, // Not provided in the example JSON
-        vitamins = _parseVitamins(jsonData),
-        servingSize = _parseServingSize(jsonData),
-        allergens = _parseAllergens(jsonData),
-        ingredients = _parseIngredients(jsonData),
-        foodGroup = _parseFoodGroup(jsonData),
-        isOrganic = _parseIsOrganic(jsonData),
         processingLevel = 'Low', // Default assumption; could be adjusted dynamically
-        weightInGrams = 100; // Assuming based on package size
+        calories = null,
+        protein = null,
+        totalFats = null,
+        carbohydrates = null,
+        fiber = null,
+        addedSugars = null,
+        sodium = null,
+        saturatedFats = null,
+        transFats = null,
+        cholesterol = null,
+        vitamins = null,
+        servingSize = null,
+        allergens = null,
+        ingredients = null,
+        foodGroup = null,
+        isOrganic = null,
+        description = null,
+        calcium = null,
+        iron = null,
+        vitaminC = null,
+        vitaminA = null
+        {
+    // Now assign the values inside the constructor body
 
+    // Helper function to get nutrient value by name
+    double? getNutrientValue(String nutrientName) {
+      for (var nutrient in jsonData['items'][0]['nutrients']) {
+        if (nutrient['name'].toString().toLowerCase() == nutrientName.toLowerCase()) {
+          return nutrient['per_100g'];
+        }
+      }
+      return null;
+    }
+
+    // Assign values to fields
+    calories = getNutrientValue('Energy');
+    protein = getNutrientValue('Protein');
+    totalFats = getNutrientValue('Total lipid (fat)');
+    carbohydrates = getNutrientValue('Carbohydrate, by difference');
+    fiber = getNutrientValue('Fiber, total dietary');
+    addedSugars = getNutrientValue('Sugars, total including NLEA');
+    calcium = getNutrientValue('Calcium, Ca');
+    iron = getNutrientValue('Iron, Fe');
+    sodium = getNutrientValue('Sodium, Na');
+    vitaminC = getNutrientValue('Vitamin C, total ascorbic acid');
+    vitaminA = getNutrientValue('Vitamin A, IU');
+    saturatedFats = getNutrientValue('Fatty acids, total saturated');
+    transFats = getNutrientValue('Fatty acids, total trans');
+    cholesterol = getNutrientValue('Cholesterol');
+
+    servingSize = jsonData['items'][0]['serving']['size'];
+    allergens = List<String>.from(jsonData['items'][0]['allergens']);
+    ingredients = List<String>.from(jsonData['items'][0]['ingredient_list']);
+
+    if (jsonData['items'][0]['categories'] != null &&
+        jsonData['items'][0]['categories'].isNotEmpty) {
+      foodGroup = jsonData['items'][0]['categories'][0];
+    }
+
+    isOrganic = jsonData['items'][0]['name']
+            .toString()
+            .toLowerCase()
+            .contains('organic') ||
+        jsonData['items'][0]['description']
+            .toString()
+            .toLowerCase()
+            .contains('organic');
+
+    description = jsonData['items'][0]['description'];
+  }
+  
   // Helper method to format all food information in a Map.
   Map<String, dynamic> getAllInformation() {
     return {
-      'calories': calories ?? 'No total calorie information available.',
-      'weight in grams': weightInGrams ?? 'No total weight information available.',
+      'calories': calories != null 
+          ? '$calories number of calories per 100 grams' 
+          : 'No total calorie information available.',
+
       'serving size': servingSize ?? 'No serving size information available.',
       'added sugars': addedSugars ?? 'No added sugar information available.',
       'fiber': fiber ?? 'No fiber information available.',
@@ -71,69 +136,166 @@ class Food {
     };
   }
 
-  // Helper function to format allergens.
-  String? _allergensToString() {
-    return allergens?.join(', ');
-  }
+  /// First it will check and see if the user is vegan, or vegetarian,
+  /// requiring a gluten free diet. 
+  /// 
+  /// If they do require any of the following restrictions to be followed,
+  /// it will then check the food and see if the food matches that description or not. 
+  /// If it does not (if the food is incompatible) then return false. 
+  /// 
+  /// If it passed that first check, then it will search through the foods ingredients and
+  /// the users dietaryRestrictions and see if any incompatible ingredients are found.
+  /// If any restrictions are matched immediently return false. 
+  /// 
+  /// Otherwise, no restrictions are matched so return true.
+  /// 
+  bool dietaryIncompadibilityCheck(){
+    if (user.vegan){
+      if (dietCompatibility("vegan") == false) return false;
+    }
 
-  // Helper function to format ingredients.
-  String? _ingredientsToString() {
-    return ingredients?.join(', ');
-  }
+    if (user.vegetarian){
+      if (dietCompatibility("vegetarian") == false) return false;
+    }
 
-  // Helper function to format vitamins.
-  String? _vitaminsToString() {
-    if (vitamins == null) return null;
-    return vitamins!.entries.map((entry) => '${entry.key}: ${entry.value}%').join(', ');
-  }
+    if (user.glutenIntolerant){
+      if (dietCompatibility("glutenIntolerant") == false) return false;
+    }
 
-  // Helper method to extract nutrient values from the JSON data.
-  static int? _parseNutrientValue(Map<String, dynamic> jsonData, String nutrientName) {
-    final nutrients = jsonData['nutrients'] as List<dynamic>? ?? [];
-    for (var nutrient in nutrients) {
-      if (nutrient['name'] == nutrientName) {
-        return (nutrient['per_100g'] as num).toInt();
+    // passed quick ez checks
+    // so lets move onto the big check.
+
+    if (user.restrictions != null){ // if the user has not supplied any restrictions, then just skip past this. 
+      dynamic ingredients = getIngredient();
+
+      // if the ingredients return as a String, then we need to put it into a list for iteration.
+      // using a comma as the delimiter in the String for the ingredients. 
+      if (ingredients is String){
+
+          // Step 1: Remove periods from the string
+        ingredients = ingredients.replaceAll('.', '');
+
+        // Step 2: Split the string by commas while keeping everything in between commas together
+        List<String> ingredientList = ingredients.split(',').map((item) => item.trim()).toList();
+
+        // since ingredients is dynamic, we can just assign it back to ingredients then we 
+        // have made our array a List<String>. 
+        ingredients = ingredientList;
       }
+
+      // otherwise it must be a list so lets just conintue normally. 
+
+      // looping through all of the restrictions and ingredients to see if any of them match. 
+      for (var restriction in user.restrictions!){
+        for (var ingredient in ingredients){
+          if (restriction == ingredient) return false;
+        }
+      }
+
+    }
+    // if there are no matches then we must be good, so return true. 
+    return true;
+  }
+
+
+  /// Diet label can be "gluten_free", "vegan", or "vegetarian". 
+  /// Returns true, false, or null depending on how compadible it is. 
+  /// 'true' for fully compatible. 'false' for not compatible. 'null' for compatibility unknown.
+  /// Otherwise null (if there is an issue pulling data or something).
+  bool? dietCompatibility(String dietLabel){
+    if (jsonData['items'][0]['diet_labels'][dietLabel]['is_compatible'] == true) return true;
+    if (jsonData['items'][0]['diet_labels'][dietLabel]['is_compatible'] == false) return true;
+    if (jsonData['items'][0]['diet_labels'][dietLabel]['is_compatible'] == null) return null;
+    return null;
+  }
+
+  /// Returns the name and the brand of the product. 
+  /// Only returns it if either @name or @brand are null. 
+  String? getName(){
+    String? brand = jsonData['items'][0]["brand"];
+    String? name = jsonData['items'][0]["name"];
+    return (brand != null && name != null) ? "$brand: $name" : null;
+  }
+
+  /// Returns the ingredients if they are not null. 
+  /// If they are null it will try to return the ingredients_list instead
+  /// which is the same thing, just in a listed format.
+  /// If both are null, then just return null.   
+  dynamic getIngredient() {
+    if (jsonData['items'][0]['ingredients'] != null){
+      return jsonData['items'][0]['ingredients'];
+    } 
+    if (jsonData['items'][0]['ingredients_list'] != null){
+      return jsonData['items'][0]['ingredients_list'];
     }
     return null;
   }
 
-  // Helper method to extract vitamins from the JSON data.
-  static Map<String, int>? _parseVitamins(Map<String, dynamic> jsonData) {
-    final nutrients = jsonData['nutrients'] as List<dynamic>? ?? [];
-    final vitamins = <String, int>{};
-    for (var nutrient in nutrients) {
-      if (nutrient['name'].contains('Vitamin')) {
-        vitamins[nutrient['name']] = (nutrient['per_100g'] as num).toInt();
+  List<String>? getAllNutrients() {
+    List<String> returnable = [];
+    // Check if 'items' and 'nutrients' exist and are in the expected format
+    if (jsonData['items'] != null && jsonData['items'] is List && jsonData['items'][0]['nutrients'] != null) {
+      // Iterate over the nutrients
+      for (final nutrient in jsonData['items'][0]['nutrients']) {
+        // Extract the name, measurement unit, and amount per 100g
+        String? name = nutrient['name'];
+        String? measurementType = nutrient['measurement_unit'];
+        dynamic per100g = nutrient['per_100g'];  // Using dynamic in case per_100g is not a String or int
+
+        // Add the nutrient details
+        returnable.add(
+          'Nutrient name: ${name == null ? name : 'Name not specified.'}, '
+          'Nutrient measurement unit: ${measurementType == null ? measurementType : 'Units not specified.'}, '
+          'Amount of $measurementType per 100g: ${per100g == null ? per100g : 'Ammount of $measurementType not specified.'}'
+        );
+
       }
+      return returnable;
+    } else {
+      print("Invalid JSON structure: 'items' or 'nutrients' not found.");
+      return null;
     }
-    return vitamins.isNotEmpty ? vitamins : null;
   }
 
-  // Helper method to extract serving size from the JSON data.
-  static int? _parseServingSize(Map<String, dynamic> jsonData) {
-    return jsonData['serving_size'] as int?;
+  String parseForAIInterpretation(){
+    return 
+    "Take the following information about the users health and dietary information. "
+    "Then take all of following information about this specific food"
+    " and return a score from 0 to 100 based on how healthy the food is for the user based"
+    " off of their health information that I have provided and the various food specifications/information."
+    ""
+    "Here is all of the users health information:"
+    "${user.getAllInformation()}"
+    "\n"
+    "Here is the food information: "
+    "Food name: ${getName()}"
+    "Food nutrients: "
+    "${getAllNutrients()}"
+    "\n"
+    "Food ingredients: "
+    "${getIngredient()}"
+    "\n"
+    ""
+    "Allergens: $allergens"
+    "";
+
+
   }
 
-  // Helper method to extract allergens from the JSON data.
-  static List<String>? _parseAllergens(Map<String, dynamic> jsonData) {
-    return (jsonData['allergens'] as List<dynamic>?)?.cast<String>();
-  }
+    // Helper function to format allergens.
+    String? _allergensToString() {
+      return allergens?.join(', ');
+    }
 
-  // Helper method to extract ingredients from the JSON data.
-  static List<String>? _parseIngredients(Map<String, dynamic> jsonData) {
-    return (jsonData['ingredient_list'] as List<dynamic>?)?.cast<String>();
-  }
+    // Helper function to format ingredients.
+    String? _ingredientsToString() {
+      return ingredients?.join(', ');
+    }
 
-  // Helper method to extract food group from the JSON data.
-  static String? _parseFoodGroup(Map<String, dynamic> jsonData) {
-    final categories = jsonData['categories'] as List<dynamic>? ?? [];
-    return categories.isNotEmpty ? categories[0] as String : null;
-  }
+    // Helper function to format vitamins.
+    String? _vitaminsToString() {
+      if (vitamins == null) return null;
+      return vitamins!.entries.map((entry) => '${entry.key}: ${entry.value}%').join(', ');
+    }
 
-  // Helper method to determine if the food is organic.
-  static bool? _parseIsOrganic(Map<String, dynamic> jsonData) {
-    final ingredients = (jsonData['ingredient_list'] as List<dynamic>?)?.join(', ').toLowerCase() ?? '';
-    return ingredients.contains('organic');
-  }
 }
