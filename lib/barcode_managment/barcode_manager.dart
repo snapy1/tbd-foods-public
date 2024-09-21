@@ -55,19 +55,26 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
           if (_prevBarcode != _currentBarcode!.displayValue) {
             print('Scanned barcode: ${_currentBarcode!.displayValue}');
 
+            // creating our Food object first.
+            Food? foodObject;
+
             // Send to Flask server.
             // Make the server request async and await the result
             server.sendRequest(widget.user, _currentBarcode!.displayValue).then((result) {
               // Handle the result of the request
               print('Request result: $result');
 
-              // Create our food object and start to process it
-              Food foodObject = Food(result, widget.user);
+              // Assign our food object
+              foodObject = Food(result, widget.user);
 
 
             }).catchError((error) {
               print('Error occurred during the request: $error');
             });
+
+            // now we can process the Food objects information with AI 
+
+            
 
             // Start or reset the timer to set prevBarcode to null after X seconds (e.g., 10 seconds)
             resetTimer?.cancel();  // Cancel any previous timer if it's running
