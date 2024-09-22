@@ -6,6 +6,8 @@ import 'package:tbd_foods/user_management/user.dart';
 class Food {
   final User user;
   final Map<String, dynamic> jsonData;
+  double? score;
+  String? analysis;
   double? calories;
   dynamic servingSize;
   double? addedSugars;
@@ -37,6 +39,8 @@ class Food {
       : naturalSugars = null, // Not provided in the example JSON
         glycemicIndex = null, // Not provided in the example JSON
         processingLevel = 'Low', // Default assumption; could be adjusted dynamically
+        score = null,
+        analysis = null,
         calories = null,
         protein = null,
         totalFats = null,
@@ -106,6 +110,41 @@ class Food {
             .contains('organic');
 
     description = jsonData['items'][0]['description'];
+  }
+
+  void setScore(String response){ 
+     // Find the part of the text containing "Score: [integer]"
+      RegExp scoreRegex = RegExp(r'Score:\s*(\d+)');
+      Match? match = scoreRegex.firstMatch(response);
+
+      // Return the extracted score as an integer if found
+      if (match != null) {
+        this.score = double.parse(match.group(1)!);
+        return;
+      }
+
+      // Return exception if no score is found
+      throw Exception('Score not found in the response.');
+    }
+
+  double? getScore() { return this.score; }
+  String? getAnalysis() { return this.analysis; }
+
+
+  void setAnalysis(String input) {
+    // Find everything up to the line that contains "Score: [integer]"
+    RegExp scoreLineRegex = RegExp(r'Score:\s*\d+');
+    List<String> lines = input.split('\n');
+
+    // Loop through lines and collect them until the "Score" line is reached
+    List<String> analysisLines = [];
+    for (String line in lines) {
+      if (scoreLineRegex.hasMatch(line)) {
+        break;  // Stop when the "Score" line is found
+      }
+      analysisLines.add(line);
+    }
+    this.analysis = analysisLines.join('\n').trim();
   }
   
   // Helper method to format all food information in a Map.
@@ -277,8 +316,10 @@ class Food {
     "\n"
     ""
     "Allergens: $allergens"
-    "";
-
+    ""
+    "At the end of your prompt, please response with the score"
+    "in the following format and nothing else at the end."
+    "Score: [score]";
 
   }
 

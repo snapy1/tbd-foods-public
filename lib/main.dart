@@ -15,7 +15,7 @@ class InitTBDFood extends StatelessWidget {
   //
   //if the user is not a new user, then load up the users data as a User object. 
   // user.loadUserDate(); <-- future function
-  final User myUser = User(age: 25, activityLevel: 30, hasWeightGoals: false, vegan: false, vegetarian: false, glutenIntolerant: false);
+  final User myUser = User(age: 25, activityLevel: 3, hasWeightGoals: false, vegan: false, vegetarian: false, glutenIntolerant: false, chronicConditions: ["diabetic"]);
   
 
   late BarcodeScannerSimple barcodeScannerSimple = BarcodeScannerSimple(user: myUser, timeout: 10);
