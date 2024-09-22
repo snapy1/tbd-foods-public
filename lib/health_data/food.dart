@@ -6,7 +6,7 @@ import 'package:tbd_foods/user_management/user.dart';
 class Food {
   final User user;
   final Map<String, dynamic> jsonData;
-  double? score;
+  double score;
   String? analysis;
   double? calories;
   dynamic servingSize;
@@ -39,7 +39,7 @@ class Food {
       : naturalSugars = null, // Not provided in the example JSON
         glycemicIndex = null, // Not provided in the example JSON
         processingLevel = 'Low', // Default assumption; could be adjusted dynamically
-        score = null,
+        score = 0,
         analysis = null,
         calories = null,
         protein = null,
@@ -127,7 +127,7 @@ class Food {
       throw Exception('Score not found in the response.');
     }
 
-  double? getScore() { return this.score; }
+  double getScore() { return this.score; }
   String? getAnalysis() { return this.analysis; }
 
 

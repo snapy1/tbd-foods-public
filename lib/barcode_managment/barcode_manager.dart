@@ -10,6 +10,7 @@ import 'package:tbd_foods/user_management/user.dart';
 class BarcodeScannerSimple extends StatefulWidget {
   final int timeout; // timeout in seconds for barcode duplication
   final User user;
+  
 
   const BarcodeScannerSimple({super.key, required this.timeout, required this.user});
 
@@ -22,6 +23,7 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
   String? _prevBarcode;
   Timer? resetTimer;  //Timer to reset prevBarcode
   late ServerConnection server = ServerConnection(IP: "http://192.168.50.227:5001");
+  double lastScore = 0;
   
 
   Widget _buildBarcode(Barcode? value) {
@@ -67,6 +69,12 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
               foodObject.setAnalysis(aiResult);
               foodObject.setScore(aiResult);
 
+              
+              // Update the lastScore and refresh UI
+              setState(() {
+                lastScore = foodObject.getScore();
+              });
+
               print(foodObject.getAnalysis());
               print("Food score: ${foodObject.getScore()}" );
 
@@ -104,7 +112,7 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Simple scanner')),
+      appBar: AppBar(title:  Text('Current Food Score: $lastScore')),
       backgroundColor: Colors.black,
       body: Stack(
         children: [
