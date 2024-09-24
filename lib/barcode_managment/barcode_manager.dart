@@ -2,16 +2,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:tbd_foods/health_data/food.dart';
+import 'package:tbd_foods/materials/inner_glow.dart';
 import 'package:tbd_foods/server_connection/server_connection.dart';
 import 'package:tbd_foods/user_management/user.dart';
+import 'package:inner_glow/inner_glow.dart';
 
 /// ***** in the future add local storage that keeps track of the previous bar codes scanned and their associated prompt for the user and that particular food/barcode ******
 
 class BarcodeScannerSimple extends StatefulWidget {
   final int timeout; // timeout in seconds for barcode duplication
   final User user;
-  
-
   const BarcodeScannerSimple({super.key, required this.timeout, required this.user});
 
   @override
@@ -22,8 +22,27 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
   Barcode? _currentBarcode;
   String? _prevBarcode;
   Timer? resetTimer;  //Timer to reset prevBarcode
-  late ServerConnection server = ServerConnection(IP: "http://148.137.229.207:5001");
+  late ServerConnection server = ServerConnection(IP: "http://192.168.50.227:5001");
   double lastScore = 0;
+  Color currentColor = Colors.transparent;
+
+  // Initialize the customGlow in initState with dummy values
+  late CustomInnerGlow customGlow;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with placeholder width and height
+    customGlow = CustomInnerGlow(
+      height: 0,
+      width: 0,
+      glowRadius: 20,
+      glowBlur: 20,
+      thickness: 40,
+      currentColor: Colors.red, // Default color
+    );
+  }
+  
   
 
   Widget _buildBarcode(Barcode? value) {
@@ -57,6 +76,12 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
 
           // Send to Flask server.
           // Make the server request async and await the result
+          
+
+          // While we are waiting for the request, lets go ahead give the glow
+          // a little effect while we are waiting for the results. 
+
+          
           server.sendRequest(widget.user, _currentBarcode!.displayValue).then((result) {
             // Handle the result of the request
 
@@ -72,6 +97,8 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
               
               // Update the lastScore and refresh UI
               setState(() {
+                // Have the score reflect the color of glow and update it in here
+                changeGlowColor(customGlow.getColorForValue(foodObject.getScore()));
                 lastScore = foodObject.getScore();
               });
 
@@ -111,16 +138,31 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
     setState(() {});
   }
 
+  // Function to update the glow color from outside build method
+  void changeGlowColor(Color newColor) {
+    setState(() {
+      customGlow.updateColor(newColor);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Get screen size and update the dimensions in the customGlow
+    final screenSize = MediaQuery.of(context).size;
+    customGlow.width = screenSize.width;
+    customGlow.height = screenSize.height;
     return Scaffold(
-      appBar: AppBar(title:  Text('Current Food Score: $lastScore')),
+      // appBar: AppBar(title:  Text('Current Food Score: $lastScore')),
       backgroundColor: Colors.black,
       body: Stack(
         children: [
+          
           MobileScanner(
             onDetect: _handleBarcode,
           ),
+
+          customGlow.buildGlowingBorder(context),
+
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -136,6 +178,29 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget buildGlowingBorder(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    
+    return Positioned.fill(
+      child: InnerGlow(
+        width: screenSize.width,  // Full width
+        height: screenSize.height, // Full height
+        glowRadius: 20,
+        glowBlur: 20,
+        thickness: 40,
+        strokeLinearGradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [currentColor, currentColor],
+          // colors: [Color.fromARGB(255, 255, 0, 0), Color.fromARGB(255, 251, 1, 1)],
+        ),
+        baseDecoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(0), // No rounded corners
+        ),
       ),
     );
   }

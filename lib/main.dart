@@ -31,9 +31,11 @@ class InitTBDFood extends StatelessWidget {
           children: [
             // Display the barcode scanner widget
             barcodeScannerSimple,
+            
           ],
         ),
       ),
     );
   }
+
 }
