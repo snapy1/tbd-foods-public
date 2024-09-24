@@ -22,7 +22,7 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
   Barcode? _currentBarcode;
   String? _prevBarcode;
   Timer? resetTimer;  //Timer to reset prevBarcode
-  late ServerConnection server = ServerConnection(IP: "http://192.168.50.227:5001");
+  late ServerConnection server = ServerConnection(IP: "http://148.137.229.207:5001");
   double lastScore = 0;
   
 
@@ -75,6 +75,8 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
                 lastScore = foodObject.getScore();
               });
 
+              // Update the glowing stroke/border around the camera. 
+
               print(foodObject.getAnalysis());
               print("Food score: ${foodObject.getScore()}" );
 
@@ -98,7 +100,7 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
           _prevBarcode = _currentBarcode!.displayValue;
         }
       } else {
-        print('No display value for the scanned barcode.');
+        throw Exception('No display value for the scanned barcode.');
       }
     });
   }
