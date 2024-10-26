@@ -9,20 +9,54 @@
 /// Dietary Preferences, vegan, vegetarian, etc. 
 /// Religion, e.g. fasting for lent. 
 /// and any other specfic dietary restrictions. 
+/// 
 library;
 
+
+import 'package:hive/hive.dart';
+import 'package:tbd_foods/user_management/measurement_util.dart';
+// import 'lib.g.dart';
+
+// Don't forget to add this annotation for the adapter
+part 'user.g.dart';
+
+@HiveType(typeId: 0)
 class User {
-  final int age;
-  final int activityLevel;
+
+  @HiveField(0)
+  final int? age;
+
+  @HiveField(1)
+  final int? activityLevel;
+
+  @HiveField(2)
   final bool hasWeightGoals;
+
+  @HiveField(3)
   final bool vegan;
+
+  @HiveField(4)
   final bool vegetarian;
+
+  @HiveField(5)
   final bool glutenIntolerant;
+
+  @HiveField(6)
   final int? currentWeight;
+
+  @HiveField(7)
   final int? weightGoal;
+
+  @HiveField(8)
   final String? religion;
+
+  @HiveField(9)
   final List<String>? chronicConditions;
+
+  @HiveField(10)
   final List<String>? nutrientDeciencies;
+
+  @HiveField(11)
   final List<String>? restrictions;
 
   User(
@@ -42,42 +76,54 @@ class User {
     }
   );
 
+  /// [Don't modify the key names] because they are used in the food class
+  /// for the @parseForAIInterpretation() function. 
   Map<String, dynamic>? getAllInformation(){
+    String unit = MeasurementUtil.getMeasurementUnit();
     return {
       'age': age,
-      'activity level': 'User as an activity level of $activityLevel which is measured from a range of 0-10',
-      'weight goals': hasWeightGoals ? weightGoal : 'User has no weight goal.',
-      'religion': religion==null ? 'User has no religous based preferences' : 'User is following the the religion of $religion''s',
-      'chronic conditions': _chronicConditionsToString() ?? 'User has no chronic conditions',
-      'nutrient deficiencies': _nutrientDeficienciesToString() ?? 'User has no nutrient defciencies',
-      'other restrictions': _otherRestrictionsToString() ?? 'User has no other restrictions'
+      'activity level': activityLevel != null ? 'User as an activity level of $activityLevel which is measured from a range of 0-10\n': 'User has not specified an activity level',
+      'current weight': hasWeightGoals ? '$currentWeight$unit' : 'User has no weight goal so this can be ignored.\n',
+      'weight goal': hasWeightGoals ? '$weightGoal$unit' : 'User has no weight goal so this can be ignored.\n',
+      'religion': (religion==null || religion == "") ? 'User has no religous based preferences' : 'User is following the the religion of $religion\n',
+      'chronic conditions': _chronicConditionsToString(),
+      'nutrient deficiencies': _nutrientDeficienciesToString(),
+      'other restrictions': _otherRestrictionsToString()
     };
   }
 
   // Function to format the chronic conditions list. and return it in a s, s, s, s format. 
-  String? _otherRestrictionsToString() {
-    if (restrictions == null) return null;
+  // Function to handle chronic conditions
+    String _chronicConditionsToString() {
+      if (chronicConditions == null || chronicConditions!.isEmpty) {
+        return 'User has no chronic condition(s)';
+      }
+      // Join the chronic conditions with a comma if the list has values
+      return chronicConditions!.join(', ');
+    }
 
-    // Join all allergens with a comma separator
-    return '${restrictions?.join(', ')},';
-  }
+    // Function to handle nutrient deficiencies
+    String _nutrientDeficienciesToString() {
+      if (nutrientDeciencies == null || nutrientDeciencies!.isEmpty) {
+        return 'User has no nutrient deficiency(ies)';
+      }
+      // Join the nutrient deficiencies with a comma if the list has values
+      return nutrientDeciencies!.join(', ');
+    }
 
-  // Function to format the netrient deficiencies list. and return it in a s, s, s, s format. 
-  String? _nutrientDeficienciesToString() {
-    if (nutrientDeciencies == null) return null;
+    // Function to handle other restrictions
+    String _otherRestrictionsToString() {
+      if (restrictions == null || restrictions!.isEmpty) {
+        return 'User has no other restriction(s)';
+      }
+      // Join the restrictions with a comma if the list has values
+      return restrictions!.join(', ');
+    }
 
-    // Join all allergens with a comma separator
-    return '${nutrientDeciencies?.join(', ')},';
-  }
-
-  // Function to format the chronic condiitons list. and return it in a s, s, s, s format. 
-  String? _chronicConditionsToString() {
-    if (chronicConditions == null) return null;
-
-    // Join all allergens with a comma separator
-    return '${chronicConditions?.join(', ')},';
-  }
-
+  /// If @chronicConditions is not null, 
+  /// then it will return it as one big long string. 
+  /// 
+  /// Otherwise, just returns null. 
   String? getChronicConditions() {
     if (chronicConditions == null) {
       return null; // or return an empty string???: ''
@@ -95,6 +141,10 @@ class User {
     }
   }
 
+  /// If @nutrientDeciencies is not null, 
+  /// then it will return it as one big long string. 
+  /// 
+  /// Otherwise, just returns null. 
   String? getNutrientDeciencies() {
     if (nutrientDeciencies == null) {
       return null; // or return an empty string???: ''
@@ -112,6 +162,10 @@ class User {
     }
   }
 
+  /// If @restrictions is not null, 
+  /// then it will return it as one big long string. 
+  /// 
+  /// Otherwise, just returns null. 
   String? getOtherRestrictions() {
     if (restrictions == null) {
       return null; // or return an empty string???: ''
@@ -128,6 +182,4 @@ class User {
         return returnable;
     }
   }
-  
-
 }

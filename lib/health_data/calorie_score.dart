@@ -21,10 +21,6 @@ class CalorieScore {
   CalorieScore({required this.currentFood, required this.currentUser});
 
 
-
-
-  
-
   /// Returns a value from 0 to 100 based off of the calorie count. 
   int _calorieScore(int calories) {
     if (calories <= 40) {

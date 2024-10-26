@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:inner_glow/inner_glow.dart';
 
+
+/// Our class that just handles the inner glow around the border of the screen
+/// that corresponds with our food score. 
 class CustomInnerGlow {
   Color currentColor;
   double height;
@@ -29,7 +32,7 @@ class CustomInnerGlow {
         strokeLinearGradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: [currentColor, currentColor.withOpacity(0.5)],
+          colors: [currentColor, currentColor.withOpacity(0.78)],
         ),
         baseDecoration: BoxDecoration(
           borderRadius: BorderRadius.circular(0), // No rounded corners

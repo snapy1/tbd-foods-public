@@ -5,7 +5,7 @@ import 'package:tbd_foods/health_data/food.dart';
 import 'package:tbd_foods/materials/inner_glow.dart';
 import 'package:tbd_foods/server_connection/server_connection.dart';
 import 'package:tbd_foods/user_management/user.dart';
-import 'package:inner_glow/inner_glow.dart';
+// import 'package:inner_glow/inner_glow.dart';
 
 /// ***** in the future add local storage that keeps track of the previous bar codes scanned and their associated prompt for the user and that particular food/barcode ******
 
@@ -39,12 +39,12 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
       glowRadius: 20,
       glowBlur: 20,
       thickness: 40,
-      currentColor: Colors.red, // Default color
+      currentColor: Colors.transparent, // Default/initial color is just transparency.  
     );
   }
-  
-  
 
+  /// Just our temporary box at the bottom of screen, 
+  /// mainly for debugging purposes. Will be removed or upgraded eventually (probably removed).
   Widget _buildBarcode(Barcode? value) {
     if (value == null) {
       return const Text(
@@ -61,7 +61,9 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
     );
   }
 
-
+  /// Handles the barcode processing and request to the server 
+  /// (in the future it will handle the swift and kotlin channels instead of a server request).
+  /// then updates our border with a color representing the number. 
   void _handleBarcode(BarcodeCapture barcodes) {
   if (mounted) {
     setState(() {
@@ -81,19 +83,18 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
           // While we are waiting for the request, lets go ahead give the glow
           // a little effect while we are waiting for the results. 
 
-          
+
           server.sendRequest(widget.user, _currentBarcode!.displayValue).then((result) {
             // Handle the result of the request
 
-            // Create our food object after receiving the result
+            // Create our food object after receriving the result
             Food foodObject = Food(result, widget.user);
-            // Now we can process the Food object's information with AI
 
+            // Now we can process the Food object's information with AI
             server.sendInfoToAI(foodObject).then((aiResult) {
               
               foodObject.setAnalysis(aiResult);
               foodObject.setScore(aiResult);
-
               
               // Update the lastScore and refresh UI
               setState(() {
@@ -103,7 +104,6 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
               });
 
               // Update the glowing stroke/border around the camera. 
-
               print(foodObject.getAnalysis());
               print("Food score: ${foodObject.getScore()}" );
 
@@ -133,12 +133,13 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
   }
 }
 
+  /// Dead function for now -- will update in future if needed, but good to have. 
   Future<void> startScanning() async {
     // Add logic here if needed when scanning is started
     setState(() {});
   }
 
-  // Function to update the glow color from outside build method
+  /// Function to update the glow color from outside build method
   void changeGlowColor(Color newColor) {
     setState(() {
       customGlow.updateColor(newColor);
@@ -178,29 +179,6 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget buildGlowingBorder(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    
-    return Positioned.fill(
-      child: InnerGlow(
-        width: screenSize.width,  // Full width
-        height: screenSize.height, // Full height
-        glowRadius: 20,
-        glowBlur: 20,
-        thickness: 40,
-        strokeLinearGradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [currentColor, currentColor],
-          // colors: [Color.fromARGB(255, 255, 0, 0), Color.fromARGB(255, 251, 1, 1)],
-        ),
-        baseDecoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(0), // No rounded corners
-        ),
       ),
     );
   }

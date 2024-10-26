@@ -118,7 +118,7 @@ class Food {
 
       // Return the extracted score as an integer if found
       if (match != null) {
-        this.score = double.parse(match.group(1)!);
+        score = double.parse(match.group(1)!);
         return;
       }
 
@@ -126,8 +126,8 @@ class Food {
       throw Exception('Score not found in the response.');
     }
 
-  double getScore() { return this.score; }
-  String? getAnalysis() { return this.analysis; }
+  double getScore() { return score; }
+  String? getAnalysis() { return analysis; }
 
 
   void setAnalysis(String input) {
@@ -143,7 +143,7 @@ class Food {
       }
       analysisLines.add(line);
     }
-    this.analysis = analysisLines.join('\n').trim();
+    analysis = analysisLines.join('\n').trim();
   }
   
   // Helper method to format all food information in a Map.
@@ -295,7 +295,38 @@ class Food {
     }
   }
 
+  /// In the future we can make this quicker by making the 
+  /// prompt very short
+  /// and then we can have a longer prompt as a second request
+  /// for more information about the item scanned. 
   String parseForAIInterpretation(){
+    return 
+    "Take the following information about the users health and dietary information. "
+    "Then take all of following information about this specific food"
+    " and return a score from 0 to 100 based on how healthy the food is for the user based"
+    " off of their health information that I have provided and the various food specifications/information."
+    ""
+    "Here is all of the users health information:"
+    "${user.getAllInformation()}"
+    "\n"
+    "Here is the food information: "
+    "Food name: ${getName()}"
+    "Food nutrients: "
+    "${getAllNutrients()}"
+    "\n"
+    "Food ingredients: "
+    "${getIngredient()}"
+    "\n"
+    ""
+    "Allergens: $allergens"
+    ""
+    "Please simply only respond with a score"
+    "in the following format and nothing else at the end."
+    "Score: [score]";
+
+  }
+
+  String parseForAIInterpretationFullInfo(){
     return 
     "Take the following information about the users health and dietary information. "
     "Then take all of following information about this specific food"
@@ -319,7 +350,6 @@ class Food {
     "At the end of your prompt, please response with the score"
     "in the following format and nothing else at the end."
     "Score: [score]";
-
   }
 
     // Helper function to format allergens.
