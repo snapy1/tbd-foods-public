@@ -5,9 +5,10 @@ import 'package:tbd_foods/user_management/user.dart';
 
 
 class InitUser extends StatefulWidget {
+  final User? initialUserData;  // This is the optional initial data
   final Function(User) onUserCreated;
 
-  const InitUser({super.key, required this.onUserCreated});
+  const InitUser({super.key, required this.onUserCreated, this.initialUserData});
 
   @override
   _InitUserState createState() => _InitUserState();
@@ -17,22 +18,45 @@ class InitUser extends StatefulWidget {
 
 /// Additionally, this class handles all of the widgets that we will see inside of our InitNewUser class application layer. 
 class _InitUserState extends State<InitUser> {
+
+  
   // Form field controllers
   int? _age;
   int? _activityLevel;
   bool _hasWeightGoals = false;
-  bool _vegan = false;
-  bool _vegetarian = false;
-  bool _glutenIntolerant = false;
   int? _currentWeight;
   int? _weightGoal;
-  String? _religion;
   User? user;
 
-  // List of controllers for input fields
-  List<TextEditingController> controllers = List.generate(3, (_) => TextEditingController());
-
+  // List of controllers for the following input fields
+  // Chronic Conditions, Nutrient Deficiences, and Other Restrictions
+  TextEditingController ageController = TextEditingController();
+  ValueNotifier<bool> hasWeightGoals = ValueNotifier<bool>(false); // default value of false
+  TextEditingController currentWeightController = TextEditingController();
+  TextEditingController weightGoalController = TextEditingController();
+  List<TextEditingController> bottomControllers = List.generate(4, (_) => TextEditingController());
+  ValueNotifier<bool> debugMode = ValueNotifier<bool>(false); // default value of false
   final _formKey = GlobalKey<FormState>();
+
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialUserData != null) {
+      _activityLevel = widget.initialUserData!.activityLevel;
+      ageController.text = widget.initialUserData!.age.toString();
+      hasWeightGoals.value = widget.initialUserData!.hasWeightGoals; // **Set checkbox based on initial user data**
+      currentWeightController.text = widget.initialUserData!.currentWeight?.toString() ?? '';
+      weightGoalController.text = widget.initialUserData!.weightGoal?.toString() ?? '';
+
+      bottomControllers[0].text = widget.initialUserData!.getChronicConditions() ?? '';
+      bottomControllers[1].text = widget.initialUserData!.getNutrientDeficiencies() ?? '';
+      bottomControllers[2].text = widget.initialUserData!.getOtherRestrictions() ?? '';
+      bottomControllers[3].text = widget.initialUserData!.getMiscInformation() ?? '';
+      debugMode.value = widget.initialUserData!.debugMode; 
+    }
+  }
+
 
   /// Seperates a string of any size by each comma
   /// and returns a list using the comma as a delimiter. 
@@ -54,8 +78,6 @@ class _InitUserState extends State<InitUser> {
       ),
     );
   }
-  
-  
 
   @override
   Widget build(BuildContext context) {
@@ -67,27 +89,26 @@ class _InitUserState extends State<InitUser> {
         child: ListView(
           children: [
             
-            // age
+            // Age TextFormField with ageController
             TextFormField(
+              controller: ageController,  // Use the ageController here
               decoration: const InputDecoration(labelText: 'Age'),
               keyboardType: TextInputType.number,
               onSaved: (value) {
-                if (value != null && value.isNotEmpty) {
-                  int? parsedAge = int.tryParse(value);
-                  if (parsedAge != null) {
-                    setState(() => _age = parsedAge);
-                  } else {
-                    // Handle invalid input (this should ideally not happen due to validation)
-                    setState(() => _age = null);
-                  }
-                }
+                // Parse the value from the ageController text when saving
+                int? parsedAge = int.tryParse(ageController.text);
+                setState(() {
+                  _age = parsedAge ?? null;
+                });
               },
               validator: (value) {
-                if (value == null || value.isEmpty) return 'Please enter your age';
-                if (int.tryParse(value) == null) return 'Please enter a valid number';
+                // Validate using the ageController text
+                if (ageController.text.isEmpty) return 'Please enter your age';
+                if (int.tryParse(ageController.text) == null) return 'Please enter a valid number';
                 return null;
               },
             ),
+
 
             // Activity Level Input
             DropdownButtonFormField<int>(
@@ -100,73 +121,100 @@ class _InitUserState extends State<InitUser> {
               onChanged: (value) => setState(() => _activityLevel = value),
             ),
 
-            // Weight Goal Checkbox
-            CheckboxListTile(
-              title: const Text('Do you have weight goals?'),
-              value: _hasWeightGoals,
-              onChanged: (value) => setState(() => _hasWeightGoals = value!),
+            // Checkbox for Weight Goals with ValueListenableBuilder to control visibility
+            ValueListenableBuilder<bool>(
+              valueListenable: hasWeightGoals,
+              builder: (context, hasGoals, child) {
+                return Column(
+                  children: [
+                    CheckboxListTile(
+                      title: const Text('Do you have weight goals?'),
+                      value: hasGoals,
+                      onChanged: (value) {
+                        if (value != null) {
+                          hasWeightGoals.value = value;
+                          setState(() => _hasWeightGoals = value); // Update _hasWeightGoals state
+                        }
+                      },
+                    ),
+
+                    // Conditionally display Current Weight and Weight Goal inputs if hasWeightGoals is true
+                    if (hasGoals) ...[
+                      TextFormField(
+                        controller: currentWeightController,  // Attach the controller
+                        decoration: InputDecoration(labelText: 'Current Weight ($unit)'),
+                        keyboardType: TextInputType.number,
+                        onSaved: (value) => setState(() => _currentWeight = int.tryParse(currentWeightController.text)),
+                      ),
+                      TextFormField(
+                        controller: weightGoalController,  // Attach the controller
+                        decoration: InputDecoration(labelText: 'Weight Goal ($unit)'),
+                        keyboardType: TextInputType.number,
+                        onSaved: (value) => setState(() => _weightGoal = int.tryParse(weightGoalController.text)),
+                      ),
+                    ],
+                  ],
+                );
+              },
             ),
 
-            // Current Weight Input (only if weight goals exist)
-            if (_hasWeightGoals)
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Current Weight ($unit)'),
-                keyboardType: TextInputType.number,
-                onSaved: (value) => setState(() => _currentWeight = int.tryParse(value!)),
-              ),
-
-            // Weight Goal Input (only if weight goals exist)
-            if (_hasWeightGoals)
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Weight Goal ($unit)'),
-                keyboardType: TextInputType.number,
-                onSaved: (value) => setState(() => _weightGoal = int.tryParse(value!)),
-              ),
-
-            // Dietary Preferences Checkboxes
-            CheckboxListTile(
-              title: const Text('Vegan'),
-              value: _vegan,
-              onChanged: (value) => setState(() => _vegan = value!),
-            ),
-            CheckboxListTile(
-              title: const Text('Vegetarian'),
-              value: _vegetarian,
-              onChanged: (value) => setState(() => _vegetarian = value!),
-            ),
-            CheckboxListTile(
-              title: const Text('Gluten Intolerant'),
-              value: _glutenIntolerant,
-              onChanged: (value) => setState(() => _glutenIntolerant = value!),
-            ),
-
-            // Religion Input
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'Religion (optional)'),
-              onSaved: (value) => setState(() => _religion = value),
-            ),
+            // // Religion Input
+            // TextFormField(
+            //   decoration: const InputDecoration(labelText: 'Religion (optional)'),
+            //   onSaved: (value) => setState(() => _religion = value),
+            // ),
 
             // Chronic Conditions Multi-Select
             const Text('Any Chronic Conditions?'),
             Wrap(
               children: [
-                multipleStringBox("Separate each by comma, leave blank for none.", controllers[0]),
+                multipleStringBox("Separate each by comma, leave blank for none.", bottomControllers[0]),
               ],
             ),
 
             const Text('Any Nutrient Deficiencies?'),
             Wrap(
               children: [
-                multipleStringBox("Separate each by comma, leave blank for none.", controllers[1]),
+                multipleStringBox("Separate each by comma, leave blank for none.", bottomControllers[1]),
               ],
             ),
 
             const Text('Any Dietary Restrictions?'),
             Wrap(
               children: [
-                multipleStringBox("Separate each by comma, leave blank for none.", controllers[2]),
+                multipleStringBox("Separate each by comma, leave blank for none.", bottomControllers[2]),
               ],
             ),
+
+            const Text("Any Other Information That You Would Like To Share?"),
+            Wrap(
+              children: [
+                multipleStringBox("e.g. Religious preferences, don't like the taste of something? etc.. ", bottomControllers[3]),
+              ],
+            ),
+
+          // Add "Debug Mode" Text
+          const Text("Debug Mode?"),
+          Wrap(
+            children: [
+              // Debug Mode checkbox with ValueListenableBuilder
+              ValueListenableBuilder<bool>(
+                valueListenable: debugMode,
+                builder: (context, isDebugEnabled, child) {
+                  return CheckboxListTile(
+                    title: const Text("Enable Debug Mode"),
+                    value: isDebugEnabled,
+                    onChanged: (value) {
+                      if (value != null) {
+                        debugMode.value = value; // Update ValueNotifier
+                      }
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+
 
             // Submit Button
             ElevatedButton(
@@ -179,15 +227,14 @@ class _InitUserState extends State<InitUser> {
                     age: _age,
                     activityLevel: _activityLevel,
                     hasWeightGoals: _hasWeightGoals,
-                    vegan: _vegan,
-                    vegetarian: _vegetarian,
-                    glutenIntolerant: _glutenIntolerant,
-                    currentWeight: _currentWeight,
-                    weightGoal: _weightGoal,
-                    religion: _religion,
-                    chronicConditions: getCommaSeparatedValues(controllers[0].text),
-                    nutrientDeciencies: getCommaSeparatedValues(controllers[1].text),
-                    restrictions: getCommaSeparatedValues(controllers[2].text),
+                    currentWeight: int.tryParse(currentWeightController.text),
+                    weightGoal: int.tryParse(weightGoalController.text),
+                    // religion: _religion,
+                    chronicConditions: getCommaSeparatedValues(bottomControllers[0].text),
+                    nutrientDeficiencies: getCommaSeparatedValues(bottomControllers[1].text),
+                    restrictions: getCommaSeparatedValues(bottomControllers[2].text),
+                    miscInformation: bottomControllers[3].text,
+                    debugMode: debugMode.value
                   );
 
                   // print for testing

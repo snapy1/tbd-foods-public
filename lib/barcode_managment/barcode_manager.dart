@@ -79,7 +79,7 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
           // Send to Flask server.
           // Make the server request async and await the result
           
-
+          /// [Future Addition]
           // While we are waiting for the request, lets go ahead give the glow
           // a little effect while we are waiting for the results. 
 

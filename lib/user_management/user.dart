@@ -10,7 +10,6 @@
 /// Religion, e.g. fasting for lent. 
 /// and any other specfic dietary restrictions. 
 /// 
-library;
 
 
 import 'package:hive/hive.dart';
@@ -33,46 +32,42 @@ class User {
   final bool hasWeightGoals;
 
   @HiveField(3)
-  final bool vegan;
-
-  @HiveField(4)
-  final bool vegetarian;
-
-  @HiveField(5)
-  final bool glutenIntolerant;
-
-  @HiveField(6)
   final int? currentWeight;
 
-  @HiveField(7)
+  @HiveField(4)
   final int? weightGoal;
 
-  @HiveField(8)
+  @HiveField(5)
   final String? religion;
 
-  @HiveField(9)
+  @HiveField(6)
   final List<String>? chronicConditions;
 
-  @HiveField(10)
-  final List<String>? nutrientDeciencies;
+  @HiveField(7)
+  final List<String>? nutrientDeficiencies;
 
-  @HiveField(11)
+  @HiveField(8)
   final List<String>? restrictions;
+
+  @HiveField(9)
+  final bool debugMode;
+
+  @HiveField(10)
+  final String? miscInformation;
 
   User(
     {
       required this.age,
       required this.activityLevel,
       required this.hasWeightGoals, 
-      required this.vegan,
-      required this.vegetarian,
-      required this.glutenIntolerant,
       this.currentWeight,
       this.weightGoal,
       this.religion,
       this.chronicConditions,
-      this.nutrientDeciencies,
-      this.restrictions
+      this.nutrientDeficiencies,
+      this.restrictions,
+      this.debugMode = false,
+      this.miscInformation,
     }
   );
 
@@ -85,10 +80,10 @@ class User {
       'activity level': activityLevel != null ? 'User as an activity level of $activityLevel which is measured from a range of 0-10\n': 'User has not specified an activity level',
       'current weight': hasWeightGoals ? '$currentWeight$unit' : 'User has no weight goal so this can be ignored.\n',
       'weight goal': hasWeightGoals ? '$weightGoal$unit' : 'User has no weight goal so this can be ignored.\n',
-      'religion': (religion==null || religion == "") ? 'User has no religous based preferences' : 'User is following the the religion of $religion\n',
       'chronic conditions': _chronicConditionsToString(),
       'nutrient deficiencies': _nutrientDeficienciesToString(),
-      'other restrictions': _otherRestrictionsToString()
+      'other restrictions': _otherRestrictionsToString(),
+      'misc information': getMiscInformation(),
     };
   }
 
@@ -104,11 +99,11 @@ class User {
 
     // Function to handle nutrient deficiencies
     String _nutrientDeficienciesToString() {
-      if (nutrientDeciencies == null || nutrientDeciencies!.isEmpty) {
+      if (nutrientDeficiencies == null || nutrientDeficiencies!.isEmpty) {
         return 'User has no nutrient deficiency(ies)';
       }
       // Join the nutrient deficiencies with a comma if the list has values
-      return nutrientDeciencies!.join(', ');
+      return nutrientDeficiencies!.join(', ');
     }
 
     // Function to handle other restrictions
@@ -145,15 +140,15 @@ class User {
   /// then it will return it as one big long string. 
   /// 
   /// Otherwise, just returns null. 
-  String? getNutrientDeciencies() {
-    if (nutrientDeciencies == null) {
+  String? getNutrientDeficiencies() {
+    if (nutrientDeficiencies == null) {
       return null; // or return an empty string???: ''
     } else {
 
         String returnable = "";
-        for (int i = 0; i < nutrientDeciencies!.length; i++) {
-          returnable += nutrientDeciencies![i];
-          if (i < nutrientDeciencies!.length - 1) {
+        for (int i = 0; i < nutrientDeficiencies!.length; i++) {
+          returnable += nutrientDeficiencies![i];
+          if (i < nutrientDeficiencies!.length - 1) {
             returnable += ", ";
           }
         }
@@ -182,4 +177,6 @@ class User {
         return returnable;
     }
   }
+
+  String? getMiscInformation(){ return miscInformation; }
 }

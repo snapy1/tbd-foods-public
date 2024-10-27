@@ -188,20 +188,7 @@ class Food {
   /// Otherwise, no restrictions are matched so return true.
   /// 
   bool dietaryIncompadibilityCheck(){
-    if (user.vegan){
-      if (dietCompatibility("vegan") == false) return false;
-    }
 
-    if (user.vegetarian){
-      if (dietCompatibility("vegetarian") == false) return false;
-    }
-
-    if (user.glutenIntolerant){
-      if (dietCompatibility("glutenIntolerant") == false) return false;
-    }
-
-    // passed quick ez checks
-    // so lets move onto the big check.
 
     if (user.restrictions != null){ // if the user has not supplied any restrictions, then just skip past this. 
       dynamic ingredients = getIngredient();

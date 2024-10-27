@@ -4,9 +4,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tbd_foods/barcode_managment/barcode_manager.dart';
 import 'package:tbd_foods/user_management/init_user.dart';
 import 'package:tbd_foods/user_management/user.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter(); // Initialize Hive
+
+    // Clear the Hive box (temporary, for debugging purposes)
+  // await Hive.deleteBoxFromDisk('userBox');
+  // return;
 
   // Register the UserAdapter
   Hive.registerAdapter(UserAdapter());  
@@ -71,7 +76,7 @@ class InitTBDFood extends StatelessWidget {
                 print("Settings Icon Pressed");
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => InitNewUser()), // Pass the new user to the next screen
+                  MaterialPageRoute(builder: (context) => EditExistingUser(existingUser: myUser,)), // Pass the new user to the next screen
                 );
               },
             ),
@@ -85,17 +90,8 @@ class InitTBDFood extends StatelessWidget {
 /// This class/application layer is responsible for initialzing a new user. 
 /// Once the new user is initialized it will automatically reinstate its self with the 
 /// "InitTBDFoods" class/application layer.
-/// 
-/// [All class comments below are a WIP and will be added/worked on gradually]
-/// This can also be used to modify the users settings. 
-/// How that works, it will take a user object as a paramter for its constructor. 
-/// If that user object is null, then we know it is indeed a brand new user. 
-/// 
-/// If it is not null, then we know that the user must be there to just modify their defaults, 
-/// so then we can go ahead and process the users info and fill it into our boxes with the users info, 
-/// so that they do not have to retype everything. 
 class InitNewUser extends StatelessWidget {
-  const InitNewUser({super.key});
+  const InitNewUser({super.key,});
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +100,7 @@ class InitNewUser extends StatelessWidget {
       body: InitUser(onUserCreated: (User newUser) async {
         // Save the user data to the box and transition to the main app
         var box = await Hive.openBox('userBox');
+
         box.put('firstTime', false); // Mark first-time as completed
         box.put('user', newUser); // Save user data
 
@@ -113,6 +110,36 @@ class InitNewUser extends StatelessWidget {
           MaterialPageRoute(builder: (context) => InitTBDFood(myUser: newUser)), // Pass the new user to the next screen
         );
       }),
+    );
+  }
+}
+
+
+/// This class is nearly identical to the InitNewUser class, but it is 
+/// used for just modifying the users presets when a user is already created
+/// in the hive. 
+class EditExistingUser extends StatelessWidget {
+  final User existingUser;  // Mark final since it’s required and passed in the constructor
+  const EditExistingUser({super.key, required this.existingUser});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Editing User Info')),
+      body: InitUser(
+        initialUserData: existingUser,  // Pass the existing user data 
+        onUserCreated: (updatedUser) async {
+          // Open the box and save the updated user information
+          var box = await Hive.openBox('userBox');
+
+          box.put('user', updatedUser); // Update with the new user data
+          
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => InitTBDFood(myUser: updatedUser)),
+          );
+        },
+      ),
     );
   }
 }
