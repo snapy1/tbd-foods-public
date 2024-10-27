@@ -164,6 +164,7 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
 
           customGlow.buildGlowingBorder(context),
 
+          if (widget.user.debugMode)
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
