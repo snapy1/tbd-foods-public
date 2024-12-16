@@ -14,4 +14,4 @@ TBD Foods is still in early development so there are undoubtedly issues and many
 
 Note that this project is protected under the Mozilla Public License. While most of the code is publicly shared on the main branch of this GitHub repository, some of it unfortunately could not be shared for privacy reasons.
 
-DISCLAIMER: TBD Foods is not meant to replace a dietitian, a doctor, or any other professional healthcare provider. Please take any results of the app at your own risk and always consult a professional healthcare provider. The data that you enter is not saved by me, the developer, anywhere but locally on your device. However, I cannot precisely say what OpenAI does with the data that we provide it from the user.
+DISCLAIMER: TBD Foods is not meant to replace a dietitian, a doctor, or any other professional healthcare provider. Please take any results of the app at your own risk and always consult a professional healthcare provider. The data that you enter is not saved by me the developer anywhere but locally on your device. However, I cannot precisely say what OpenAI does with the data that we provide it from the user.
