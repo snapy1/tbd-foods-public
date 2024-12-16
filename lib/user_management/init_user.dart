@@ -98,7 +98,7 @@ class _InitUserState extends State<InitUser> {
                 // Parse the value from the ageController text when saving
                 int? parsedAge = int.tryParse(ageController.text);
                 setState(() {
-                  _age = parsedAge ?? null;
+                  _age = parsedAge;
                 });
               },
               validator: (value) {

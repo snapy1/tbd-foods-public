@@ -7,24 +7,24 @@ class Food {
   final Map<String, dynamic> jsonData;
   double score;
   String? analysis;
-  double? calories;
+  dynamic calories;
   dynamic servingSize;
-  double? addedSugars;
-  double? fiber;
-  double? sodium;
-  double? saturatedFats;
-  double? transFats;
+  dynamic addedSugars;
+  dynamic fiber;
+  dynamic sodium;
+  dynamic saturatedFats;
+  dynamic transFats;
   Map<String, int>? vitamins;
-  double? protein;
-  double? carbohydrates;
-  double? totalFats;
-  double? cholesterol;
-  double? naturalSugars;
-  double? calcium;
-  double? iron;
-  double? vitaminC;
-  double? vitaminA;
-  double? glycemicIndex; // Good for determining food health for diabetics.
+  dynamic protein;
+  dynamic carbohydrates;
+  dynamic totalFats;
+  dynamic cholesterol;
+  dynamic naturalSugars;
+  dynamic calcium;
+  dynamic iron;
+  dynamic vitaminC;
+  dynamic vitaminA;
+  dynamic glycemicIndex; // Good for determining food health for diabetics.
   List<String>? allergens;
   List<String>? ingredients;
   String? foodGroup;
@@ -65,7 +65,7 @@ class Food {
     // Now assign the values inside the constructor body
 
     // Helper function to get nutrient value by name
-    double? getNutrientValue(String nutrientName) {
+    dynamic? getNutrientValue(String nutrientName) {
       for (var nutrient in jsonData['items'][0]['nutrients']) {
         if (nutrient['name'].toString().toLowerCase() == nutrientName.toLowerCase()) {
           return nutrient['per_100g'];
@@ -121,7 +121,7 @@ class Food {
         score = double.parse(match.group(1)!);
         return;
       }
-
+    print(response);
       // Return exception if no score is found
       throw Exception('Score not found in the response.');
     }

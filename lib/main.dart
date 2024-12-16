@@ -1,31 +1,89 @@
 // ignore_for_file: must_be_immutable
+import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tbd_foods/barcode_managment/barcode_manager.dart';
 import 'package:tbd_foods/user_management/init_user.dart';
 import 'package:tbd_foods/user_management/user.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() async {
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter(); // Initialize Hive
 
-    // Clear the Hive box (temporary, for debugging purposes)
-  // await Hive.deleteBoxFromDisk('userBox');
-  // return;
+  try {
+    // Loading environmental variables from the root directory
+    await dotenv.load(fileName: ".env");
 
-  // Register the UserAdapter
-  Hive.registerAdapter(UserAdapter());  
+    // Initialize OpenAI
+    final apiKey = dotenv.env['OPENAI_API_KEY'];
+    if (apiKey == null || apiKey.isEmpty) {
+      throw Exception("OPENAI_API_KEY is missing from the .env file.");
+    }
+    OpenAI.apiKey = apiKey;
+    OpenAI.requestsTimeOut = const Duration(seconds: 30);
+    OpenAI.baseUrl = "https://api.openai.com/v1/chat/completions?";
+    OpenAI.organization = "org-bSIAB4bYm210wgLzAZxtjumX";
 
-  // Open the Hive box used to store user information
-  var box = await Hive.openBox('userBox');
+    // List<OpenAIModelModel> models = await OpenAI.instance.model.list();
+    // OpenAIModelModel firstModel = models.first;
+    
+    // print(firstModel.id); // ...
+    // print(firstModel.permission); // ...
 
-  // Checking to see if the user has used the app before or not. 
-  bool isFirstTime = box.get('firstTime', defaultValue: true);
-  User? savedUser = box.get('user'); // Try to load the saved User object
+    // Initializing Hive
+    await Hive.initFlutter();
+    Hive.registerAdapter(UserAdapter());
+    var box = await Hive.openBox('userBox');
 
-  // Finally spin up the application once all the user information is attemped to be loaded. 
-  runApp(MyApp(isFirstTime: isFirstTime /*<-- Can be just changed to strictly false or true for debugging if needed. */, savedUser: savedUser));
+    bool isFirstTime = box.get('firstTime', defaultValue: true);
+    User? savedUser = box.get('user');
+
+    // Start the application
+    runApp(MyApp(isFirstTime: isFirstTime, savedUser: savedUser));
+  } catch (e, stackTrace) {
+    print("Error during initialization: $e");
+    print(stackTrace);
+
+    // Show an error screen or fallback widget
+    runApp(MaterialApp(home: Scaffold(body: Center(child: Text("Initialization failed: $e")))));
+  }
 }
+
+// Future main() async { // was void
+
+//   // Getting our widgets loaded up
+//   WidgetsFlutterBinding.ensureInitialized();
+
+//   // Loading our environmental variables first and getting the AI ready to go. 
+//   await dotenv.load(fileName: ".env");
+//   // OpenAI.apiKey = dotenv.env['OPENAI_API_KEY']!;
+//   // OpenAI.requestsTimeOut = const Duration(seconds: 30);
+//   // OpenAI.baseUrl = "https://api.openai.com/v1";
+
+
+  
+//   // WidgetsFlutterBinding.ensureInitialized();
+
+//   // Initializing our Hive databse
+//   await Hive.initFlutter(); 
+
+//     // Clear the Hive box (temporary, for debugging purposes)
+//   // await Hive.deleteBoxFromDisk('userBox');
+//   // return;
+
+//   // Register the UserAdapter
+//   Hive.registerAdapter(UserAdapter());  
+
+//   // Open the Hive box used to store user information
+//   var box = await Hive.openBox('userBox');
+
+//   // Checking to see if the user has used the app before or not. 
+//   bool isFirstTime = box.get('firstTime', defaultValue: true);
+//   User? savedUser = box.get('user'); // Try to load the saved User object
+
+//   // Finally spin up the application once all the user information is attemped to be loaded. 
+//   runApp(MyApp(isFirstTime: isFirstTime /*<-- Can be just changed to strictly false or true for debugging if needed. */, savedUser: savedUser));
+// }
 
 class MyApp extends StatelessWidget {
   final bool isFirstTime;
@@ -42,7 +100,7 @@ class MyApp extends StatelessWidget {
     /// as its paramter for the constructor. 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: isFirstTime ? InitNewUser() : (savedUser != null ? InitTBDFood(myUser: savedUser!) : InitNewUser()), // Fallback to InitNewUser if savedUser is null
+      home: isFirstTime ? const InitNewUser() : (savedUser != null ? InitTBDFood(myUser: savedUser!) : const InitNewUser()), // Fallback to InitNewUser if savedUser is null
     );
   }
 }
@@ -143,3 +201,6 @@ class EditExistingUser extends StatelessWidget {
     );
   }
 }
+
+
+

@@ -10,6 +10,7 @@
 /// Religion, e.g. fasting for lent. 
 /// and any other specfic dietary restrictions. 
 /// 
+library;
 
 
 import 'package:hive/hive.dart';

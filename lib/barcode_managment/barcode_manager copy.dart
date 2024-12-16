@@ -65,67 +65,128 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
     );
   }
 
-// Handles the barcode scanning by taking the barcode, sending it to our API
-// and then creating a food object. 
-void _handleBarcode(BarcodeCapture barcodes) async {
+  /// Handles the barcode processing and request to the server 
+  /// (in the future it will handle the swift and kotlin channels instead of a server request).
+  /// then updates our border with a color representing the number. 
+  /// 
+
+  void _handleBarcode(BarcodeCapture barcodes) async {
   if (!mounted) return;
 
   setState(() {
     _currentBarcode = barcodes.barcodes.firstOrNull;
-
-    // Check if barcode or displayValue is null
-    if (_currentBarcode == null || _currentBarcode!.displayValue == null) {
-      throw Exception('No display value for the scanned barcode!');
-    }
-
-    // Check if we've scanned the same barcode again
-    if (_prevBarcode == _currentBarcode!.displayValue) {
-      print('Same barcode scanned again, ignoring this scan.');
-      return;
-    }
-
-    // This is a new barcode, handle it
-    print('Scanned Barcode: ${_currentBarcode!.displayValue}');
-
-    handler.sendChompRequest(widget.user, _currentBarcode!.displayValue!).then((result) {
-      Food foodObject = Food(result, widget.user);
-
-      handler.sendAIRequest(foodObject).then((score) {
-        foodObject.setAnalysis(score);
-        foodObject.setScore(score);
-        print(foodObject.getAllInformation());
-
-        // Update the UI with the new score and glow color
-        setState(() {
-          changeGlowColor(customGlow.getColorForValue(foodObject.getScore()));
-          lastScore = foodObject.getScore();
-        });
-
-        print(foodObject.getAnalysis());
-        print("Food Score: ${foodObject.getScore()}");
-
-      }).catchError((error) {
-        throw Exception('Error occurred during the AI request: $error');
-      });
-
-    }).catchError((error) {
-      throw Exception('Error occurred during the chomp request: $error');
-    });
-
-    // Reset the barcode after a certain timeout
-    resetTimer?.cancel();
-    resetTimer = Timer(Duration(seconds: widget.timeout), () {
-      setState(() {
-        _prevBarcode = null;
-        print('prevBarcode set to null after ${widget.timeout} seconds');
-      });
-    });
-
-    // Update the last scanned barcode
-    _prevBarcode = _currentBarcode!.displayValue;
   });
+
+  // Ensure the barcode has a display value and is different from the previous one
+  if (_currentBarcode != null && _currentBarcode!.displayValue != null) {
+    if (_prevBarcode != _currentBarcode!.displayValue) {
+      _prevBarcode = _currentBarcode!.displayValue; // Update the previous barcode
+      print('Scanned barcode: ${_currentBarcode!.displayValue}');
+
+      try {
+        // Optional: Show a loading indicator or glow effect here
+
+        // Send the request to the Flask server and await the response
+        final Map<String, dynamic> response = await handler.sendChompRequest(
+          widget.user,
+          _currentBarcode!.displayValue,
+        );
+
+        // Process the data into a new Food object
+        Food foodObject = Food(response, widget.user);
+
+        // Perform further actions with the Food object (e.g., update UI or state)
+        print('Processed response: $response');
+      } catch (e) {
+        // Handle errors gracefully
+        print('Error during barcode handling: $e');
+      }
+    }
+  }
 }
 
+//   void _handleBarcode(BarcodeCapture barcodes) {
+//   if (mounted) {
+//     setState(() {
+//       _currentBarcode = barcodes.barcodes.firstOrNull;
+
+//       // Print the barcode number to the console
+//       if (_currentBarcode != null && _currentBarcode!.displayValue != null) {
+
+//         // If the bar code is different than the previous one, then go ahead and process it.
+//         if (_prevBarcode != _currentBarcode!.displayValue) {
+//           print('Scanned barcode: ${_currentBarcode!.displayValue}');
+
+//           // Send to Flask server.
+//           // Make the server request async and await the result
+          
+//           /// [Future Addition]
+//           // While we are waiting for the request, lets go ahead give the glow
+//           // a little effect while we are waiting for the results. 
+
+//           // [updated method of api calls to work across all platforms without the need for channels]
+
+//           // Request and recieve JSON data from the API. 
+//           Future<Map<String, dynamic>> call = handler.sendChompRequest(widget.user, _currentBarcode!.displayValue);
+          
+//           // Process the data into a new food object
+//           Food foodObject = Food(call as Map<String, dynamic>, widget.user);
+
+//           return; // remove then 
+
+
+// // [Old way]
+//   //         server.sendRequest(widget.user, _currentBarcode!.displayValue).then((result) {
+//   //           // Handle the result of the request
+
+//   //           // Create our food object after receriving the result
+//   //           Food foodObject = Food(result, widget.user);
+
+//   //           // Now we can process the Food object's information with AI
+//   //           server.sendInfoToAI(foodObject).then((aiResult) {
+              
+//   //             foodObject.setAnalysis(aiResult);
+//   //             foodObject.setScore(aiResult);
+              
+//   //             // Update the lastScore and refresh UI
+//   //             setState(() {
+//   //               // Have the score reflect the color of glow and update it in here
+//   //               changeGlowColor(customGlow.getColorForValue(foodObject.getScore()));
+//   //               lastScore = foodObject.getScore();
+//   //             });
+
+//   //             // Update the glowing stroke/border around the camera. 
+//   //             print(foodObject.getAnalysis());
+//   //             print("Food score: ${foodObject.getScore()}" );
+
+//   //           }).catchError((error) {
+//   //             throw Exception('Error occurred during AI processing: $error');
+//   //           });
+
+//   //         }).catchError((error) {
+//   //           throw Exception('Error occurred during the request: $error');
+//   //         });
+
+// // [end old way]
+
+
+//           // Start or reset the timer to set prevBarcode to null after X seconds (e.g., 10 seconds)
+//           resetTimer?.cancel();  // Cancel any previous timer if it's running
+//           resetTimer = Timer(Duration(seconds: widget.timeout), () {
+//             setState(() {
+//               _prevBarcode = null;
+//               print('prevBarcode reset to null after 10 seconds.');
+//             });
+//           });
+
+//           _prevBarcode = _currentBarcode!.displayValue;
+//         }
+//       } else {
+//         throw Exception('No display value for the scanned barcode.');
+//       }
+//     });
+//   }
+// }
 
   /// Dead function for now -- will update in future if needed, but good to have. 
   Future<void> startScanning() async {
