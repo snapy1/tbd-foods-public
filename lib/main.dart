@@ -6,6 +6,7 @@ import 'package:tbd_foods/barcode_managment/barcode_manager.dart';
 import 'package:tbd_foods/user_management/init_user.dart';
 import 'package:tbd_foods/user_management/user.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+final String? chompKey = dotenv.env['CHOMPFOODS_API_KEY'];
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,12 +24,6 @@ Future main() async {
     OpenAI.requestsTimeOut = const Duration(seconds: 30);
     OpenAI.baseUrl = "https://api.openai.com/v1/chat/completions?";
     OpenAI.organization = "org-bSIAB4bYm210wgLzAZxtjumX";
-
-    // List<OpenAIModelModel> models = await OpenAI.instance.model.list();
-    // OpenAIModelModel firstModel = models.first;
-    
-    // print(firstModel.id); // ...
-    // print(firstModel.permission); // ...
 
     // Initializing Hive
     await Hive.initFlutter();
@@ -48,42 +43,6 @@ Future main() async {
     runApp(MaterialApp(home: Scaffold(body: Center(child: Text("Initialization failed: $e")))));
   }
 }
-
-// Future main() async { // was void
-
-//   // Getting our widgets loaded up
-//   WidgetsFlutterBinding.ensureInitialized();
-
-//   // Loading our environmental variables first and getting the AI ready to go. 
-//   await dotenv.load(fileName: ".env");
-//   // OpenAI.apiKey = dotenv.env['OPENAI_API_KEY']!;
-//   // OpenAI.requestsTimeOut = const Duration(seconds: 30);
-//   // OpenAI.baseUrl = "https://api.openai.com/v1";
-
-
-  
-//   // WidgetsFlutterBinding.ensureInitialized();
-
-//   // Initializing our Hive databse
-//   await Hive.initFlutter(); 
-
-//     // Clear the Hive box (temporary, for debugging purposes)
-//   // await Hive.deleteBoxFromDisk('userBox');
-//   // return;
-
-//   // Register the UserAdapter
-//   Hive.registerAdapter(UserAdapter());  
-
-//   // Open the Hive box used to store user information
-//   var box = await Hive.openBox('userBox');
-
-//   // Checking to see if the user has used the app before or not. 
-//   bool isFirstTime = box.get('firstTime', defaultValue: true);
-//   User? savedUser = box.get('user'); // Try to load the saved User object
-
-//   // Finally spin up the application once all the user information is attemped to be loaded. 
-//   runApp(MyApp(isFirstTime: isFirstTime /*<-- Can be just changed to strictly false or true for debugging if needed. */, savedUser: savedUser));
-// }
 
 class MyApp extends StatelessWidget {
   final bool isFirstTime;

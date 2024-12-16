@@ -24,7 +24,7 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
   String? _prevBarcode;
   Timer? resetTimer;  //Timer to reset prevBarcode
   // late ServerConnection server = ServerConnection(IP: "http://192.168.50.227:5001");
-  late ApiHandler handler = const ApiHandler(key: "16BafyUODec4VGJxA");
+  late ApiHandler handler = const ApiHandler();
   double lastScore = 0;
   Color currentColor = Colors.transparent;
 
