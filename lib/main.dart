@@ -22,8 +22,8 @@ Future main() async {
     }
     OpenAI.apiKey = apiKey;
     OpenAI.requestsTimeOut = const Duration(seconds: 30);
-    OpenAI.baseUrl = "https://api.openai.com/v1/chat/completions?";
-    OpenAI.organization = "org-bSIAB4bYm210wgLzAZxtjumX";
+    OpenAI.baseUrl = "https://api.openai.com/v1/chat/completions?"
+    OpenAI.organization = dotenv.env['OPENAI_API_ORG'];
 
     // Initializing Hive
     await Hive.initFlutter();
