@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+/// Handles all API communication to both Chomp & OpenAI. 
 class ApiHandler {
   
   const ApiHandler();
@@ -14,7 +15,6 @@ class ApiHandler {
 
   Future<Map<String, dynamic>> sendChompRequest(User userObject, String? barcodeID) async {
     // First, this sends the barcode data to our server
-    // https://chompthis.com/api/v2/food/branded/barcode.php?code=031146270606&api_key=16BafyUODec4VGJxA
     var url = Uri.parse('https://chompthis.com/api/v2/food/branded/barcode.php?code=$barcodeID&api_key=${dotenv.env['CHOMPFOODS_API_KEY']}');
 
     try {
@@ -25,7 +25,7 @@ class ApiHandler {
       if (response.statusCode == 200) {
         // Decode JSON response
         final Map<String, dynamic> responseData = json.decode(response.body);
-        print("api_handle.dart response successful");
+        // print("api_handle.dart response successful");
         return responseData;
       } else {
         throw Exception('Failed to load data: ${response.statusCode}');
@@ -37,21 +37,20 @@ class ApiHandler {
 
   Future<String> sendAIRequest(Food food) async {
     String AIMessage = food.parseForAIInterpretation();
-    final init_request = OpenAIChatCompletionChoiceMessageModel(
+    final initRequest = OpenAIChatCompletionChoiceMessageModel(
       content: [
         OpenAIChatCompletionChoiceMessageContentItemModel.text(AIMessage),
       ],
       role: OpenAIChatMessageRole.user,
     );
 
-    // Create a Completer to await the full streamed response
     Completer<String> completer = Completer<String>();
 
     final chatStream = OpenAI.instance.chat.createStream(
       model: "gpt-3.5-turbo",
-      messages: [init_request],
+      messages: [initRequest],
       seed: 423,
-      n: 1, // Make sure to only request one completion
+      n: 1, // ** Make sure to only request one completion ** 
     );
 
     StringBuffer buffer = StringBuffer();
@@ -67,8 +66,8 @@ class ApiHandler {
         }
       },
       onDone: () {
-        print("Done");
-        print(buffer.toString());
+        // print("Done");
+        // print(buffer.toString());
         // Complete the future with the final response
         completer.complete(buffer.toString());
       },
@@ -78,7 +77,6 @@ class ApiHandler {
       },
     );
 
-  // Await the future that completes when onDone is called.
   return completer.future;
   }
 

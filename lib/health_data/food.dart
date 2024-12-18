@@ -65,7 +65,7 @@ class Food {
     // Now assign the values inside the constructor body
 
     // Helper function to get nutrient value by name
-    dynamic getNutrientValue(String nutrientName) {
+    dynamic? getNutrientValue(String nutrientName) {
       for (var nutrient in jsonData['items'][0]['nutrients']) {
         if (nutrient['name'].toString().toLowerCase() == nutrientName.toLowerCase()) {
           return nutrient['per_100g'];
@@ -121,7 +121,7 @@ class Food {
         score = double.parse(match.group(1)!);
         return;
       }
-    print(response);
+    // print(response);
       // Return exception if no score is found
       throw Exception('Score not found in the response.');
     }

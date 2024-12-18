@@ -3,20 +3,7 @@
 // From Anywhere in Your App (without context): You can call the method statically without passing any BuildContext, which is useful in non-UI code or when you don’t have access to context:
 // String unit = MeasurementUtil.getMeasurementUnit();
 // print(unit); // Will print 'lbs' or 'kg' based on locale
-
 // From Within a Widget (using context): If you’re within a widget and you want to access the locale through context, you can use the getMeasurementUnitFromContext method:
-
-// @override
-// Widget build(BuildContext context) {
-//   String unit = MeasurementUtil.getMeasurementUnitFromContext(context);
-//   print(unit); // Will print 'lbs' or 'kg' based on locale
-
-//   return Scaffold(
-//     appBar: AppBar(
-//       title: Text('Weight Unit: $unit'),
-//     ),
-//   );
-// }
 
 // Why Two Methods?
 // getMeasurementUnit: This method works without context, so you can call it anywhere in the app.

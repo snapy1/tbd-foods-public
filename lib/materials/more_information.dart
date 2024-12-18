@@ -52,7 +52,7 @@ class MoreInformation extends StatelessWidget {
             ),
             const SizedBox(height: 12.0),
             const Text(
-              'This is a detailed description of the food item and related health information. Customize this as needed.',
+              'This app is still in early development, you are currently using an unofficial release.\nThis app is powerd by ChompFoods API.\nThis will be a detailed description of the food item and related health information.',
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16.0),

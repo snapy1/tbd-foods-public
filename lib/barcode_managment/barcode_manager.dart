@@ -6,9 +6,6 @@ import 'package:tbd_foods/health_data/food.dart';
 import 'package:tbd_foods/materials/inner_glow.dart';
 import 'package:tbd_foods/materials/more_information.dart';
 import 'package:tbd_foods/user_management/user.dart';
-// import 'package:inner_glow/inner_glow.dart';
-
-/// ***** in the future add local storage that keeps track of the previous bar codes scanned and their associated prompt for the user and that particular food/barcode ******
 
 class BarcodeScannerSimple extends StatefulWidget {
   final int timeout; // timeout in seconds for barcode duplication
@@ -23,10 +20,9 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
   Barcode? _currentBarcode;
   String? _prevBarcode;
   Timer? resetTimer;  //Timer to reset prevBarcode
-  // late ServerConnection server = ServerConnection(IP: "http://192.168.50.227:5001");
   late ApiHandler handler = const ApiHandler();
   double lastScore = 0;
-  Color currentColor = Colors.transparent;
+  Color currentColor = Colors.transparent; // initialized the defalt color to just nothing. 
 
   // Initialize the customGlow in initState with dummy values
   late CustomInnerGlow customGlow;
@@ -36,7 +32,7 @@ class _BarcodeScannerSimpleState extends State<BarcodeScannerSimple> {
   @override
   void initState() {
     super.initState();
-    // Initialize with placeholder width and height
+    // Initialize with placeholder values
     customGlow = CustomInnerGlow(
       height: 0,
       width: 0,
@@ -85,7 +81,7 @@ void _handleBarcode(BarcodeCapture barcodes) async {
     }
 
     // This is a new barcode, handle it
-    print('Scanned Barcode: ${_currentBarcode!.displayValue}');
+    // print('Scanned Barcode: ${_currentBarcode!.displayValue}');
 
     handler.sendChompRequest(widget.user, _currentBarcode!.displayValue!).then((result) {
       Food foodObject = Food(result, widget.user);
@@ -101,8 +97,8 @@ void _handleBarcode(BarcodeCapture barcodes) async {
           lastScore = foodObject.getScore();
         });
 
-        print(foodObject.getAnalysis());
-        print("Food Score: ${foodObject.getScore()}");
+        // print(foodObject.getAnalysis());
+        // print("Food Score: ${foodObject.getScore()}");
 
       }).catchError((error) {
         throw Exception('Error occurred during the AI request: $error');
@@ -112,12 +108,12 @@ void _handleBarcode(BarcodeCapture barcodes) async {
       throw Exception('Error occurred during the chomp request: $error');
     });
 
-    // Reset the barcode after a certain timeout
+    // Reset the barcode after a certain time
     resetTimer?.cancel();
     resetTimer = Timer(Duration(seconds: widget.timeout), () {
       setState(() {
         _prevBarcode = null;
-        print('prevBarcode set to null after ${widget.timeout} seconds');
+        // print('prevBarcode set to null after ${widget.timeout} seconds');
       });
     });
 
@@ -164,7 +160,7 @@ void _handleBarcode(BarcodeCapture barcodes) async {
 
           customGlow.buildGlowingBorder(context),
 
-          // Adding the MoreInformation widget conditionally
+          // Adding the MoreInformation widget 
           if (_isMoreInfoVisible)
             Center(
               child: MoreInformation(

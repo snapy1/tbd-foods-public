@@ -67,7 +67,6 @@ class MyApp extends StatelessWidget {
 
 /// This is our primary application layer
 /// where the user will interact with the applications main interface. 
-/// 
 class InitTBDFood extends StatelessWidget {
   final User myUser;
   late BarcodeScannerSimple barcodeScannerSimple = BarcodeScannerSimple(user: myUser, timeout: 10);
@@ -82,7 +81,7 @@ class InitTBDFood extends StatelessWidget {
           // Display the barcode scanner widget
           barcodeScannerSimple,
 
-          // Positioned settings icon
+          // Positioning the settings icon
           Positioned(
             top: 50, // Distance from the top
             right: 10, // Distance from the right

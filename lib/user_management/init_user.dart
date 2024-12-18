@@ -1,8 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:tbd_foods/user_management/measurement_util.dart';
 import 'package:tbd_foods/user_management/user.dart';
-
 
 class InitUser extends StatefulWidget {
   final User? initialUserData;  // This is the optional initial data
@@ -15,7 +13,6 @@ class InitUser extends StatefulWidget {
 }
 
 /// Used to initialize a new user. 
-
 /// Additionally, this class handles all of the widgets that we will see inside of our InitNewUser class application layer. 
 class _InitUserState extends State<InitUser> {
 
@@ -158,12 +155,6 @@ class _InitUserState extends State<InitUser> {
               },
             ),
 
-            // // Religion Input
-            // TextFormField(
-            //   decoration: const InputDecoration(labelText: 'Religion (optional)'),
-            //   onSaved: (value) => setState(() => _religion = value),
-            // ),
-
             // Chronic Conditions Multi-Select
             const Text('Any Chronic Conditions?'),
             Wrap(
@@ -229,7 +220,6 @@ class _InitUserState extends State<InitUser> {
                     hasWeightGoals: _hasWeightGoals,
                     currentWeight: int.tryParse(currentWeightController.text),
                     weightGoal: int.tryParse(weightGoalController.text),
-                    // religion: _religion,
                     chronicConditions: getCommaSeparatedValues(bottomControllers[0].text),
                     nutrientDeficiencies: getCommaSeparatedValues(bottomControllers[1].text),
                     restrictions: getCommaSeparatedValues(bottomControllers[2].text),
@@ -238,7 +228,7 @@ class _InitUserState extends State<InitUser> {
                   );
 
                   // print for testing
-                  print(newUser.getAllInformation());
+                  // print(newUser.getAllInformation());
 
                   // Call the callback to pass the user back to the main app
                   widget.onUserCreated(newUser);
